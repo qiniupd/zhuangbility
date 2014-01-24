@@ -1,3 +1,6 @@
+/* jshint undef: true, unused: true */
+/* jshint browser: true, devel: true*/
+
 var Q = {};
 
 Q.utf8_encode = function(argString) {
@@ -234,47 +237,305 @@ Q.URLSafeBase64Decode = function(v) {
 };
 
 Q.genrateImgURL = function() {
+    var bgUrl = 'http://zhuangbility.qiniudn.com/v2/whitebg.png',
+        avaUrl = 'http://zhuangbility.qiniudn.com/ava.jpg-avatar',
+        bubbleheadUrl = 'http://zhuangbility.qiniudn.com/bubblehead.png',
+        bubblefootUrl = 'http://zhuangbility.qiniudn.com/v1/bubblefoot.png',
+        like1Url = 'http://zhuangbility.qiniudn.com/like1.png',
+        like2Url = 'http://zhuangbility.qiniudn.com/like2.png',
+        cutlineUrl = 'http://zhuangbility.qiniudn.com/cutline.png',
+        commentUrl = 'http://zhuangbility.qiniudn.com/comment.png';
+
+    var FONT = '微软雅黑';
+    var NAME_SIZE = 32,
+        POST_SIZE = 28,
+        LIKE_SIZE = 26,
+        COMMENT_SIZE = 26;
+
     var d = function(x, y) {
         return '/dx/' + x + '/dy/' + y + '/gravity/NorthWest';
     };
     var image = function(url, dx, dy) {
-        return '/image/' + Q.URLSafeBase64Encode(url + '-avatar') + d(dx, dy);
+        return '/image/' + Q.URLSafeBase64Encode(url) + d(dx, dy);
     };
-    var text = function(str, size, color, dx, dy) {
+    var text = function(str, font, size, color, dx, dy) {
         var text = Q.URLSafeBase64Encode(str),
-            font = Q.URLSafeBase64Encode('微软雅黑'),
+            f = Q.URLSafeBase64Encode(font),
             c = Q.URLSafeBase64Encode(color);
-        return '/text/' + text + '/font/' + font + '/fontsize/' + size * 20 + '/fill/' + c + d(dx, dy);
+        return '/text/' + text + '/font/' + f + '/fontsize/' + size * 20 + '/fill/' + c + d(dx, dy);
     };
-    var baseUrl = 'http://zhuangbility.qiniudn.com/bg.png';
-    var avaImageUrl = 'http://zhuangbility.qiniudn.com/ava.jpg';
-    var avaParam = image(avaImageUrl, 24, 138);
 
-    var name = '夜尽巫师'; // '马逸清';
-    var textColor = 'red'; //'#4e678f';
-    var t1Param = text(name, 32, 'red', 122, 132);
-    var t2Param = text('大家快来点赞', 30, 'red', 122, 184);
+    var renderName = function(name) {
+        return text(name, FONT, NAME_SIZE, '#506992', 122, 132);
+    };
+    var renderPost = function(lines, oy) {
+        var result = '';
+        var y = oy;
+        for (var i = 0; i < lines.length; i++) {
+            result += text(lines[i], FONT, POST_SIZE, 'black', 122, y + i * 33);
+        }
+        return result;
+    };
+    var renderLike = function(lines, oy) {
+        var result = '';
+        for (var i = 0; i < lines.length; i++) {
+            result += image(i === 0 ? like1Url : like2Url, 122, oy + i * 33);
+            result += text(lines[i], FONT, LIKE_SIZE, '#506991', i === 0 ? 178 : 134, oy - 5 + i * 33);
+        }
+        return result;
+    };
+    var renderComment = function(comments, oy) {
+        var firstLine = function(name, src, dx, dy) {
+            var result = '';
+            var nameLen = name.length;
+            result += image(commentUrl, 122, dy);
+            result += text(name, FONT, COMMENT_SIZE, '#556d93', dx, dy);
+            result += text(': ' + src, FONT, COMMENT_SIZE, '#3d3b3c', dx + COMMENT_SIZE * nameLen, dy);
+            return result;
+        };
+        var firstLineReply = function(namea, nameb, src, dx, dy) {
+            var result = '';
+            var nameLena = namea.length,
+                nameLenb = nameb.length;
+            var x = dx;
 
-    var like1 = '钰尐儿,夜尽巫师,峰子,战岳,lidaobing,',
-        like2 = 'SunLn,应,Candyweina,珏珏,韩暧昷,锅锅,',
-        like3 = 'Vera';
-    var t3Param1 = text(like1, 28, 'red', 178, 706);
-    var t3Param2 = text(like2, 28, 'red', 134, 740);
-    var t3Param3 = text(like3, 28, 'red', 134, 774);
+            result += image(commentUrl, 122, dy);
+            result += text(namea, FONT, COMMENT_SIZE, '#556d93', x, dy);
+            x += COMMENT_SIZE * nameLena + 2;
+            result += text('回复', FONT, COMMENT_SIZE, '#3d3b3c', x, dy);
+            x += COMMENT_SIZE * 2 + 2;
+            result += text(nameb, FONT, COMMENT_SIZE, '#556d93', x, dy);
+            x += COMMENT_SIZE * nameLenb;
+            result += text(': ' + src, FONT, COMMENT_SIZE, '#3d3b3c', x, dy);
+            return result;
+        };
+        var allLine = function(src, dx, dy) {
+            var result = '';
+            result += image(commentUrl, 122, dy);
+            result += text(src, FONT, COMMENT_SIZE, '#3d3b3c', dx, dy);
+            return result;
+        };
 
-    var comment1 = '珏珏: 呵呵';
-    var t4Param = text(comment1, 28, 'red', 134, 872);
-    var comment2 = '锅锅: 死宅赞一个';
-    var t5Param = text(comment2, 28, 'red', 134, 912);
-    var comment3 = '之之浩: 自己点自己赞 你可以的';
-    var t6Param = text(comment3, 28, 'red', 134, 952);
+        var result = '';
+        var y = oy;
+        for (var i = 0; i < comments.length; i++) {
+            var nameLen = 0;
+            var comLines = [];
+            if (comments[i].length === 3) {
+                var namea = comments[i][0],
+                    nameb = comments[i][1];
+                nameLen = len(namea) + len(nameb) + 2;
+                comLines = split2line(comments[i][2], 20, nameLen);
+                result += firstLineReply(namea, nameb, comLines[0], 134, y);
+            } else {
+                var name = comments[i][0];
+                nameLen = len(name);
+                comLines = split2line(comments[i][1], 20, nameLen);
+                result += firstLine(name, comLines[0], 134, y);
+            }
+            y += 40;
+            commentLineNum++;
+            if (comLines.length > 1) {
+                for (var j = 1; j < comLines.length; j++) {
+                    result += allLine(comLines[j], 134, y);
+                    y += 40;
+                    commentLineNum++;
+                }
+            }
+        }
+        return result;
+    };
 
-    return baseUrl + '?watermark/3' + [avaParam, t1Param, t2Param, t3Param1, t3Param2, t3Param3, t4Param, t5Param, t6Param].join('');
+    var len = function(str) {
+        var flag = 0,
+            len = 0;
+        for (var i = 0; i < str.length; i++) {
+            if (/[A-Za-z0-9]/.test(str[i])) {
+                if (flag === 1) len++;
+                flag = (flag + 1) % 2;
+            } else {
+                len++;
+            }
+        }
+        return len + flag;
+    };
+    var split2line = function(post, linesize, offset) {
+        var msg = post,
+            limit = linesize - offset,
+            lines = [];
+        var flag = 0;
+        var count = 0;
+        for (var i = 0; i < msg.length; i++) {
+            if (/[A-Za-z0-9]/.test(msg[i])) {
+                if (flag === 0) limit++;
+                flag = (flag + 1) % 2;
+            }
+            if (count === limit) {
+                lines.push(msg.slice(i - limit, i));
+                limit = linesize;
+                count = 0;
+                count++;
+            } else if (i === msg.length - 1) {
+                lines.push(msg.slice(i - count, i + 1));
+                break;
+            } else {
+                count++;
+            }
+        }
+        return lines;
+    };
+
+    var split2LikeLine = function(persons) {
+        var lines = [],
+            temp = [],
+            tempLen = 0;
+        var limit = 19;
+        for (var i = 0; i < persons.length; i++) {
+            if (tempLen + len(persons[i]) > limit) {
+                lines.push(temp.join(', ') + ',');
+                temp = [];
+                tempLen = 0;
+            }
+            temp.push(persons[i]);
+            tempLen += len(persons[i]);
+            if (i === persons.length - 1) {
+                lines.push(temp.join(', '));
+                break;
+            }
+        }
+        return lines;
+    };
+
+    var getName = function() {
+        return document.getElementById('name').value;
+    };
+    var getPost = function() {
+        return document.getElementById('post').value;
+    };
+    var getPerson = function() {
+        var likes = document.getElementsByClassName('like');
+        var p = [];
+        for (var i = 0; i < likes.length; i++) {
+            if (likes[i].value !== '') {
+                p.push(likes[i].value);
+            }
+        }
+        return p;
+    };
+    var getComments = function() {
+        var comments = document.getElementsByClassName('comment');
+        var c = [];
+        for (var i = 0; i < comments.length; i++) {
+            var namea = comments[i].getElementsByClassName('namea')[0].value,
+                nameb = comments[i].getElementsByClassName('nameb')[0].value,
+                msg = comments[i].getElementsByClassName('msg')[0].value;
+            var line = [];
+            if (namea !== '') {
+                line.push(namea);
+                if (nameb !== '') {
+                    line.push(nameb);
+                }
+                if (msg !== '') {
+                    line.push(msg);
+                }
+            }
+            if (line.length > 0) {
+                c.push(line);
+            }
+        }
+        return c;
+    };
+
+    var renderList = [];
+    var scanLine = 184;
+    var avatar = image(avaUrl, 24, 138);
+    renderList.push(avatar);
+
+    var nameTxt = getName();
+    console.log(nameTxt);
+    var name = renderName(nameTxt);
+    renderList.push(name);
+
+    // var postMsg = '虽然我很帅，人聪明，又会讲笑话。但你不要轻易喜欢上我，因为我是孤独的风中一匹狼。';
+    var postMsg = getPost();
+    console.log(postMsg);
+    var postLines = split2line(postMsg, 20, 0);
+    var post = renderPost(postLines, scanLine);
+    scanLine += 33 * postLines.length + 26;
+    renderList.push(post);
+
+    var bubblehead = image(bubbleheadUrl, 122, scanLine);
+    scanLine += 60;
+    renderList.push(bubblehead);
+
+    // var persons = [
+    //     '钰尐儿',
+    //     '夜尽巫师',
+    //     '峰子',
+    //     '战岳',
+    //     'lidaobing',
+    //     'SunLn',
+    //     '应',
+    //     'Candy weina',
+    //     '珏珏',
+    //     '韩暧昷',
+    //     '锅锅',
+    //     'Vera'
+    // ];
+    var persons = getPerson();
+    console.log(persons);
+
+    // persons.push('七牛云存储');
+    var likeLines = split2LikeLine(persons);
+    var likes = renderLike(likeLines, scanLine); // TODO
+    scanLine += likeLines.length * 33;
+    renderList.push(likes);
+
+    var commentLineNum = 0;
+    var commentsList = getComments();
+    if (commentsList.length > 0) {
+        var cutline = image(cutlineUrl, 122, scanLine);
+        scanLine += 14;
+        renderList.push(cutline);
+        // var commentsList = [
+        //     ['韩暧昷', '暖'],
+        //     ['任威风', '韩暧昷', '这伤口还要疼上多久，提醒我那些曾经拥有。'],
+        //     ['杲艳平', '威风好厉害'],
+        //     ['任威风', '杲艳平', '我在想，何时遇到你才最好，然而，你却这样来到']
+        // ];
+        console.log(commentsList);
+        var comments = renderComment(commentsList, scanLine); // TODO
+        scanLine += commentLineNum * 40;
+        renderList.push(comments);
+    }
+
+
+    var bubblefoot = image(bubblefootUrl, 0, scanLine);
+    scanLine += 40;
+    renderList.push(bubblefoot);
+
+    // var renderList = [
+    //     avatar,
+    //     name,
+    //     post,
+    //     bubblehead,
+    //     likes,
+    //     cutline,
+    //     comments,
+    //     bubblefoot
+    // ];
+
+    // return bgUrl;
+    var imageUrl = bgUrl + '?watermark/3' + renderList.join('');
+    var finalUrl = imageUrl + '|imageMogr2/crop/720x' + scanLine + '';
+    return imageUrl;
 };
 
 window.onload = function() {
-    var img = document.getElementById('demo');
-    var src = Q.genrateImgURL();
-    console.debug(src);
-    img.src = src;
+    document.getElementById('btn').onclick = function() {
+        var img = document.getElementById('demo');
+        var src = Q.genrateImgURL();
+        img.src = src;
+        // window.location.href = src;
+    };
 };
