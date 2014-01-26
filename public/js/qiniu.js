@@ -208,9 +208,7 @@
         uploader.init();
 
         uploader.bind('FilesAdded', function(up, files) {
-            $.each(files, function(i, file) {
-                up.start();
-            });
+            up.start();
             up.refresh(); // Reposition Flash/Silverlight
         });
 
