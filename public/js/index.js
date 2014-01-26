@@ -6,6 +6,11 @@ var Q = {};
 
 Q.avatarUrl = '';
 Q.photoUrl = '';
+Q.photoSize = {
+    width: 0,
+    height: 0
+};
+Q.photoStyle = '';
 
 Q.utf8_encode = function(argString) {
     // http://kevin.vanzonneveld.net
@@ -242,7 +247,7 @@ Q.URLSafeBase64Decode = function(v) {
 
 Q.genrateImgURL = function() {
     var bgUrl = 'http://zhuangbility.qiniudn.com/v2/whitebg.png',
-        avaUrl = Q.avatarUrl + '-avatar',
+        avaUrl = Q.avatarUrl ? Q.avatarUrl + '-ava' : 'http://zhuangbility.qiniudn.com/ava.jpg-ava',
         bubbleheadUrl = 'http://zhuangbility.qiniudn.com/bubblehead.png',
         bubblefootUrl = 'http://zhuangbility.qiniudn.com/v1/bubblefoot.png',
         like1Url = 'http://zhuangbility.qiniudn.com/like1.png',
@@ -277,6 +282,28 @@ Q.genrateImgURL = function() {
         var y = oy;
         for (var i = 0; i < lines.length; i++) {
             result += text(lines[i], FONT, POST_SIZE, 'black', 122, y + i * 33);
+        }
+        return result;
+    };
+    var getStyleAndDy = function() {
+        var result = {
+            styleName: ''
+        };
+        var w = Q.photoSize.width,
+            h = Q.photoSize.height;
+        if (w > 570 || h > 400) {
+            if (w / h > 570 / 400) {
+                result.styleName = '-phw';
+                result.dy = 570 * h / w;
+            } else if (w / h < 570 / 400) {
+                result.styleName = '-phh';
+                result.dy = 400;
+            } else {
+                result.styleName = '-phfull';
+                result.dy = 400;
+            }
+        } else if (w > 0 && h > 0) {
+            result.dy = h;
         }
         return result;
     };
@@ -460,7 +487,6 @@ Q.genrateImgURL = function() {
     var name = renderName(nameTxt);
     renderList.push(name);
 
-    // var postMsg = '虽然我很帅，人聪明，又会讲笑话。但你不要轻易喜欢上我，因为我是孤独的风中一匹狼。';
     var postMsg = getPost();
     console.log(postMsg);
     var postLines = split2line(postMsg, 20, 0);
@@ -468,28 +494,19 @@ Q.genrateImgURL = function() {
     scanLine += 33 * postLines.length + 26;
     renderList.push(post);
 
-    var photo = image(Q.photoUrl, 0, scanLine);
-    scanLine += 200;
-    renderList.push(photo);
+    if (Q.photoUrl !== '') {
+        var ret = getStyleAndDy();
+        var photo = image(Q.photoUrl + ret.styleName, 122, scanLine);
+        scanLine += ret.dy + 16;
+        console.log(ret);
+        console.log(Q.photoUrl + ret.styleName);
+        renderList.push(photo);
+    }
 
     var bubblehead = image(bubbleheadUrl, 122, scanLine);
     scanLine += 60;
     renderList.push(bubblehead);
 
-    // var persons = [
-    //     '钰尐儿',
-    //     '夜尽巫师',
-    //     '峰子',
-    //     '战岳',
-    //     'lidaobing',
-    //     'SunLn',
-    //     '应',
-    //     'Candy weina',
-    //     '珏珏',
-    //     '韩暧昷',
-    //     '锅锅',
-    //     'Vera'
-    // ];
     var persons = getPerson();
     console.log(persons);
 
@@ -505,12 +522,6 @@ Q.genrateImgURL = function() {
         var cutline = image(cutlineUrl, 122, scanLine);
         scanLine += 14;
         renderList.push(cutline);
-        // var commentsList = [
-        //     ['韩暧昷', '暖'],
-        //     ['任威风', '韩暧昷', '这伤口还要疼上多久，提醒我那些曾经拥有。'],
-        //     ['杲艳平', '威风好厉害'],
-        //     ['任威风', '杲艳平', '我在想，何时遇到你才最好，然而，你却这样来到']
-        // ];
         console.log(commentsList);
         var comments = renderComment(commentsList, scanLine); // TODO
         scanLine += commentLineNum * 40;
@@ -521,17 +532,6 @@ Q.genrateImgURL = function() {
     var bubblefoot = image(bubblefootUrl, 0, scanLine);
     scanLine += 40;
     renderList.push(bubblefoot);
-
-    // var renderList = [
-    //     avatar,
-    //     name,
-    //     post,
-    //     bubblehead,
-    //     likes,
-    //     cutline,
-    //     comments,
-    //     bubblefoot
-    // ];
 
     // return bgUrl;
     var imageUrl = bgUrl + '?watermark/3' + renderList.join('');
@@ -597,6 +597,7 @@ Q.initPluploader = function(browse_button_id, container_id, progress_id, error_i
             default:
                 prefix = 'default/';
         }
+        prefix += (new Date()).valueOf() + '/';
         up.settings.multipart_params.key = prefix + file.name;
     });
 
@@ -617,10 +618,92 @@ Q.initPluploader = function(browse_button_id, container_id, progress_id, error_i
             Q.avatarUrl = link + res.key;
         } else if (res.key.indexOf('photo/') > -1) {
             Q.photoUrl = link + res.key;
+            console.log(Q.photoUrl);
+            Q.imgReady(Q.photoUrl, function() {
+                console.log(this.width, this.height);
+                Q.photoSize.width = this.width;
+                Q.photoSize.height = this.height;
+                console.log(Q.photoSize);
+            }, null, null);
         }
         document.getElementById(progress_id).innerHTML = link + res.key + '    上传成功';
     });
 };
+
+Q.imgReady = (function() {
+    var list = [],
+        intervalId = null,
+
+        // 用来执行队列
+        tick = function() {
+            var i = 0;
+            for (; i < list.length; i++) {
+                list[i].end ? list.splice(i--, 1) : list[i]();
+            };
+            !list.length && stop();
+        },
+
+        // 停止所有定时器队列
+        stop = function() {
+            clearInterval(intervalId);
+            intervalId = null;
+        };
+
+    return function(url, ready, load, error) {
+        var onready, width, height, newWidth, newHeight,
+            img = new Image();
+        img.src = url;
+
+        // 如果图片被缓存，则直接返回缓存数据
+        if (img.complete) {
+            ready.call(img);
+            load && load.call(img);
+            return;
+        }
+
+        width = img.width;
+        height = img.height;
+
+        // 加载错误后的事件
+        img.onerror = function() {
+            error && error.call(img);
+            onready.end = true;
+            img = img.onload = img.onerror = null;
+        };
+
+        // 图片尺寸就绪
+        onready = function() {
+            newWidth = img.width;
+            newHeight = img.height;
+            if (newWidth !== width || newHeight !== height ||
+                // 如果图片已经在其他地方加载可使用面积检测
+                newWidth * newHeight > 1024
+            ) {
+                ready.call(img);
+                onready.end = true;
+            };
+        };
+        onready();
+
+        // 完全加载完毕的事件
+        img.onload = function() {
+            // onload在定时器时间差范围内可能比onready快
+            // 这里进行检查并保证onready优先执行
+            !onready.end && onready();
+            load && load.call(img);
+            // IE gif动画会循环执行onload，置空onload即可
+            img = img.onload = img.onerror = null;
+        };
+
+        // 加入队列中定期执行
+        if (!onready.end) {
+            list.push(onready);
+            // 无论何时只允许出现一个定时器，减少浏览器性能损耗
+            if (intervalId === null) intervalId = setInterval(tick, 40);
+        }
+    };
+})();
+
 
 window.onload = function() {
     Q.initPluploader('uploadAvatar', 'upload-wrapper-1', 'progess-1', 'error-1');
