@@ -1,7 +1,11 @@
 /* jshint undef: true, unused: true */
-/* jshint browser: true, devel: true*/
+/* jshint browser: true, devel: true, jquery: true*/
+/* global plupload*/
 
 var Q = {};
+
+Q.avatarUrl = '';
+Q.photoUrl = '';
 
 Q.utf8_encode = function(argString) {
     // http://kevin.vanzonneveld.net
@@ -238,7 +242,7 @@ Q.URLSafeBase64Decode = function(v) {
 
 Q.genrateImgURL = function() {
     var bgUrl = 'http://zhuangbility.qiniudn.com/v2/whitebg.png',
-        avaUrl = 'http://zhuangbility.qiniudn.com/ava.jpg-avatar',
+        avaUrl = Q.avatarUrl + '-avatar',
         bubbleheadUrl = 'http://zhuangbility.qiniudn.com/bubblehead.png',
         bubblefootUrl = 'http://zhuangbility.qiniudn.com/v1/bubblefoot.png',
         like1Url = 'http://zhuangbility.qiniudn.com/like1.png',
@@ -464,6 +468,10 @@ Q.genrateImgURL = function() {
     scanLine += 33 * postLines.length + 26;
     renderList.push(post);
 
+    var photo = image(Q.photoUrl, 0, scanLine);
+    scanLine += 200;
+    renderList.push(photo);
+
     var bubblehead = image(bubbleheadUrl, 122, scanLine);
     scanLine += 60;
     renderList.push(bubblehead);
@@ -531,7 +539,92 @@ Q.genrateImgURL = function() {
     return imageUrl;
 };
 
+Q.initPluploader = function(browse_button_id, container_id, progress_id, error_id) {
+    var uploader = new plupload.Uploader({
+        runtimes: 'html5,flash,silverlight,html4',
+        browse_button: document.getElementById(browse_button_id),
+        container: document.getElementById(container_id),
+        max_file_size: '5mb',
+        url: 'http://up.qiniu.com',
+        flash_swf_url: 'js/plupload/Moxie.swf',
+        silverlight_xap_url: 'js/plupload/Moxie.xap',
+        multi_selection: false,
+        filters: {
+            mime_types: [{
+                title: "Image files",
+                extensions: "jpg,gif,png"
+            }]
+        },
+        multipart: true,
+        multipart_params: {
+            key: '',
+            token: ''
+        }
+    });
+
+    uploader.bind('Init', function(up, params) {
+        //显示当前上传方式，调试用
+        $.ajax({
+            url: '/token',
+            type: 'GET',
+            cache: false,
+            success: function(data) {
+                if (data && data.token) {
+                    up.settings.multipart_params.token = data.token;
+                }
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    });
+    uploader.init();
+
+    uploader.bind('FilesAdded', function(up, files) {
+        up.start();
+        up.refresh(); // Reposition Flash/Silverlight
+    });
+
+    uploader.bind('BeforeUpload', function(up, file) {
+        var prefix = '';
+        switch (browse_button_id) {
+            case 'uploadAvatar':
+                prefix = 'avatar/';
+                break;
+            case 'uploadPhoto':
+                prefix = 'photo/';
+                break;
+            default:
+                prefix = 'default/';
+        }
+        up.settings.multipart_params.key = prefix + file.name;
+    });
+
+    uploader.bind('UploadProgress', function(up, file) {
+        document.getElementById(progress_id).innerHTML = file.percent + "%," + up.total.bytesPerSec;
+    });
+
+    uploader.bind('Error', function(up, err) {
+        document.getElementById(error_id).innerHTML += "\nError #" + err.code + ": " + err.message;
+        up.refresh(); // Reposition Flash/Silverlight
+    });
+
+
+    uploader.bind('FileUploaded', function(up, file, info) {
+        var res = $.parseJSON(info.response);
+        var link = 'http://zhuangbility.qiniudn.com/';
+        if (res.key.indexOf('avatar/') > -1) {
+            Q.avatarUrl = link + res.key;
+        } else if (res.key.indexOf('photo/') > -1) {
+            Q.photoUrl = link + res.key;
+        }
+        document.getElementById(progress_id).innerHTML = link + res.key + '    上传成功';
+    });
+};
+
 window.onload = function() {
+    Q.initPluploader('uploadAvatar', 'upload-wrapper-1', 'progess-1', 'error-1');
+    Q.initPluploader('uploadPhoto', 'upload-wrapper-2', 'progess-2', 'error-2');
     document.getElementById('btn').onclick = function() {
         var img = document.getElementById('demo');
         var src = Q.genrateImgURL();

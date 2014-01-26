@@ -164,76 +164,7 @@
         };
     };
 
-    var initPluploader = function(browse_button_id, container_id, progress_id, error_id) {
-        var uploader = new plupload.Uploader({
-            runtimes: 'html5,flash,silverlight,html4',
-            browse_button: document.getElementById(browse_button_id),
-            container: document.getElementById(container_id),
-            max_file_size: '5mb',
-            url: 'http://up.qiniu.com',
-            flash_swf_url: 'js/plupload/Moxie.swf',
-            silverlight_xap_url: 'js/plupload/Moxie.xap',
-            multi_selection: false,
-            filters: {
-                mime_types: [{
-                    title: "Image files",
-                    extensions: "jpg,gif,png"
-                }]
-            },
-            multipart: true,
-            multipart_params: {
-                key: '',
-                token: ''
-            }
-        });
 
-
-
-        uploader.bind('Init', function(up, params) {
-            //显示当前上传方式，调试用
-            $.ajax({
-                url: '/token',
-                type: 'GET',
-                cache: false,
-                success: function(data) {
-                    if (data && data.token) {
-                        up.settings.multipart_params.token = data.token;
-                    }
-                },
-                error: function(error) {
-                    console.log(error);
-                }
-            });
-        });
-        uploader.init();
-
-        uploader.bind('FilesAdded', function(up, files) {
-            up.start();
-            up.refresh(); // Reposition Flash/Silverlight
-        });
-
-        uploader.bind('BeforeUpload', function(up, file) {
-            up.settings.multipart_params.key = file.name;
-        });
-
-        uploader.bind('UploadProgress', function(up, file) {
-            document.getElementById(progress_id).innerHTML = file.percent + "%," + up.total.bytesPerSec
-        });
-
-        uploader.bind('Error', function(up, err) {
-            document.getElementById(error_id).innerHTML += "\nError #" + err.code + ": " + err.message;
-            up.refresh(); // Reposition Flash/Silverlight
-        });
-
-
-        uploader.bind('FileUploaded', function(up, file, info) {
-            var res = $.parseJSON(info.response);
-            var link = 'http://zhuangbility.qiniudn.com/';
-            document.getElementById(progress_id).innerHTML = link + res.key + '    上传成功';
-        });
-    }
-    initPluploader('uploadAvatar', 'upload-wrapper-1', 'progess-1', 'error-1');
-    initPluploader('uploadPhoto', 'upload-wrapper-2', 'progess-2', 'error-2');
 
 
 
