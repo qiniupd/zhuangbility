@@ -4,62 +4,27 @@ block content
   h1= title
   p Welcome to #{title}
   label name:
-    input#name(value='任威风')
+    input#name(value='')
   br
   #upload-wrapper-1
     button#uploadAvatar upload avatar
     #progess-1
     #error-1
   label post:
-    input#post(value='虽然我很帅，人聪明，又会讲笑话。但你不要轻易喜欢上我，因为我是孤独的风中一匹狼。')
+    input#post(value='')
   br
   #upload-wrapper-2
     button#uploadPhoto upload photo
     #progess-2
-    #error-2    
+    #error-2
 
   .likes
     p likes:
-    input.like(value='钰尐儿')
-    input.like(value='夜尽巫师')
-    input.like(value='峰子')
-    input.like(value='战岳')
-    input.like(value='lidaobing')
-    input.like(value='Candy weina')
-    input.like(value='韩暧昷')
     - for (var i = 0; i < 16; i++)
       input.like
 
   .comments
     p comments
-    .comment
-      span name1:
-      input.namea(value='韩暧昷')
-      span name2:
-      input.nameb(value='')
-      span msg:
-      input.msg(value='暖')
-    .comment
-      span name1:
-      input.namea(value='任威风')
-      span name2:
-      input.nameb(value='韩暧昷')
-      span msg:
-      input.msg(value='这伤口还要疼上多久，提醒我那些曾经拥有。')
-    .comment
-      span name1:
-      input.namea(value='杲艳平')
-      span name2:
-      input.nameb(value='')
-      span msg:
-      input.msg(value='威风好厉害')
-    .comment
-      span name1:
-      input.namea(value='任威风')
-      span name2:
-      input.nameb(value='杲艳平')
-      span msg:
-      input.msg(value='我在想，何时遇到你才最好，然而，你却这样来到')
     - for (var i = 0; i < 16; i++)
       .comment
         span name1:
@@ -70,4 +35,5 @@ block content
         input.msg
 
   button#btn Let's ZhuangB!
+  button#load load
   img#demo(src='', style='border:2px solid grey')

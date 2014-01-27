@@ -1,4 +1,5 @@
 /* jshint undef: true, unused: true */
+/* jshint expr: true, boss: true */
 /* jshint browser: true, devel: true, jquery: true*/
 /* global plupload*/
 
@@ -11,6 +12,29 @@ Q.photoSize = {
     height: 0
 };
 Q.photoStyle = '';
+Q.template = {
+    newyear: {
+        post: '哥哥从南非给我带回来的5克拉蓝色钻石，可惜春节在夏威夷度假，玩的太high, 晒得有点黑~~偶朋友圈的小姐伙伴们，你们的春节假期怎么过？',
+        persons: ["李娜", "潘石屹", "任志强", "马云", "史玉柱", "庆丰包子铺", "郭敬明", "韩寒"],
+        comments: [
+            ['李娜', '我从来没想过在中国以外的地方生活，因为我小时候在国外打球训练，很不习惯，必须得回家。我还是回家“挤春运”吧！'],
+            ['$name', '李娜', '娜样精彩！'],
+            ['潘石屹', '我给乡亲卖苹果！义务代言家乡天水的苹果。网上很多人骂我，说我（代言“潘苹果”）赚了不少钱。我的代言、捧场完全是义务的，我没有赚钱，我还贴了钱。'],
+            ['任志强', '潘石屹', '别听小潘瞎忽悠！'],
+            ['庆丰包子铺', '奋笔疾书写文案：“庆丰包子铺酱肉包子”制作秘籍，“从庆丰包子铺的21元套餐看名人营销”以及“春节期间庆丰包子铺旅游团开团”。'],
+            ['郭敬明', '又是这样漫长而灰蒙蒙的冬季 - 我们的爱，恨，感动，伤怀。'],
+            ['韩寒', '郭敬明', '小四，“萌”你比不过我哦！'],
+            ['冯小刚', '你丫看春晚怎么不吐槽！'],
+            ['李娜', '我从来没想过在中国以外的地方生活，因为我小时候在国外打球训练，所以我不知道']
+        ],
+    }
+};
+
+var FONT = '微软雅黑';
+var NAME_SIZE = 32,
+    POST_SIZE = 28,
+    LIKE_SIZE = 26,
+    COMMENT_SIZE = 26;
 
 Q.utf8_encode = function(argString) {
     // http://kevin.vanzonneveld.net
@@ -245,197 +269,204 @@ Q.URLSafeBase64Decode = function(v) {
     return Q.base64_decode(v);
 };
 
+Q.d = function(x, y) {
+    return '/dx/' + x + '/dy/' + y + '/gravity/NorthWest';
+};
+
+Q.text = function(str, font, size, color, dx, dy) {
+    var t = Q.URLSafeBase64Encode(str),
+        f = Q.URLSafeBase64Encode(font),
+        c = Q.URLSafeBase64Encode(color);
+    return '/text/' + t + '/font/' + f + '/fontsize/' + size * 20 + '/fill/' + c + Q.d(dx, dy);
+};
+
+Q.image = function(url, dx, dy) {
+    return '/image/' + Q.URLSafeBase64Encode(url) + Q.d(dx, dy);
+};
+
+Q.renderAvatar = function(url, dy) {
+    return Q.image(url, 24, dy);
+};
+
+Q.renderName = function(name, dy) {
+    return Q.text(name, FONT, NAME_SIZE, '#506992', 122, dy);
+};
+
+Q.renderPost = function(postMsg, oy) {
+    var lines = Q.split2line(postMsg, 20, 0);
+    var result = '';
+    var y = oy;
+    for (var i = 0; i < lines.length; i++) {
+        result += Q.text(lines[i], FONT, POST_SIZE, 'black', 122, y + i * 33);
+    }
+    return result;
+};
+
+Q.renderLike = function(lines, oy) {
+    var like1Url = 'http://zhuangbility.qiniudn.com/like1.png',
+        like2Url = 'http://zhuangbility.qiniudn.com/like2.png';
+    var result = '';
+    for (var i = 0; i < lines.length; i++) {
+        result += Q.image(i === 0 ? like1Url : like2Url, 122, oy + i * 33);
+        result += Q.text(lines[i], FONT, LIKE_SIZE, '#506991', i === 0 ? 178 : 134, oy - 5 + i * 33);
+    }
+    return result;
+};
+
+Q.getStyleAndDy = function() {
+    var result = {
+        styleName: ''
+    };
+    var w = Q.photoSize.width,
+        h = Q.photoSize.height;
+    if (w > 570 || h > 400) {
+        if (w / h > 570 / 400) {
+            result.styleName = '-phw';
+            result.dy = 570 * h / w;
+        } else if (w / h < 570 / 400) {
+            result.styleName = '-phh';
+            result.dy = 400;
+        } else {
+            result.styleName = '-phfull';
+            result.dy = 400;
+        }
+    } else if (w > 0 && h > 0) {
+        result.dy = h;
+    }
+    result.dy = Math.floor(result.dy) + 1;
+    return result;
+};
+
+Q.renderComment = function(comments, oy) {
+    var commentUrl = 'http://zhuangbility.qiniudn.com/comment.png';
+    var firstLine = function(name, src, dx, dy) {
+        var result = '';
+        var nameLen = Q.len(name);
+        result += Q.image(commentUrl, 122, dy);
+        result += Q.text(name, FONT, COMMENT_SIZE, '#556d93', dx, dy);
+        result += Q.text(': ' + src, FONT, COMMENT_SIZE, '#3d3b3c', dx + COMMENT_SIZE * nameLen, dy);
+        return result;
+    };
+    var firstLineReply = function(namea, nameb, src, dx, dy) {
+        var result = '';
+        var nameLena = Q.len(namea),
+            nameLenb = Q.len(nameb);
+        var x = dx;
+
+        result += Q.image(commentUrl, 122, dy);
+        result += Q.text(namea, FONT, COMMENT_SIZE, '#556d93', x, dy);
+        x += COMMENT_SIZE * nameLena + 2;
+        result += Q.text('回复', FONT, COMMENT_SIZE, '#3d3b3c', x, dy);
+        x += COMMENT_SIZE * 2 + 2;
+        result += Q.text(nameb, FONT, COMMENT_SIZE, '#556d93', x, dy);
+        x += COMMENT_SIZE * nameLenb;
+        result += Q.text(': ' + src, FONT, COMMENT_SIZE, '#3d3b3c', x, dy);
+        return result;
+    };
+    var allLine = function(src, dx, dy) {
+        var result = '';
+        result += Q.image(commentUrl, 122, dy);
+        result += Q.text(src, FONT, COMMENT_SIZE, '#3d3b3c', dx, dy);
+        return result;
+    };
+
+    var result = '';
+    var y = oy;
+    for (var i = 0; i < comments.length; i++) {
+        var nameLen = 0;
+        var comLines = [];
+        if (comments[i].length === 3) {
+            var namea = comments[i][0],
+                nameb = comments[i][1];
+            nameLen = Q.len(namea) + Q.len(nameb) + 2;
+            comLines = Q.split2line(comments[i][2], 20, nameLen);
+            result += firstLineReply(namea, nameb, comLines[0], 134, y);
+        } else {
+            var name = comments[i][0];
+            nameLen = Q.len(name);
+            comLines = Q.split2line(comments[i][1], 20, nameLen);
+            result += firstLine(name, comLines[0], 134, y);
+        }
+        y += 40;
+        commentLineNum++;
+        if (comLines.length > 1) {
+            for (var j = 1; j < comLines.length; j++) {
+                result += allLine(comLines[j], 134, y);
+                y += 40;
+                commentLineNum++;
+            }
+        }
+    }
+    return result;
+};
+
+Q.len = function(str) {
+    var flag = 0,
+        len = 0;
+    for (var i = 0; i < str.length; i++) {
+        if (/[A-Za-z0-9]/.test(str[i])) {
+            if (flag === 1) len++;
+            flag = (flag + 1) % 2;
+        } else {
+            len++;
+        }
+    }
+    return len + flag;
+};
+Q.split2line = function(post, linesize, offset) {
+    var msg = post,
+        limit = linesize - offset,
+        lines = [];
+    var flag = 0;
+    var count = 0;
+    for (var i = 0; i < msg.length; i++) {
+        if (/[A-Za-z0-9]/.test(msg[i])) {
+            if (flag === 0) limit++;
+            flag = (flag + 1) % 2;
+        }
+        if (count === limit) {
+            lines.push(msg.slice(i - limit, i));
+            limit = linesize;
+            count = 0;
+            count++;
+        } else if (i === msg.length - 1) {
+            lines.push(msg.slice(i - count, i + 1));
+            break;
+        } else {
+            count++;
+        }
+    }
+    return lines;
+};
+
+Q.split2LikeLine = function(persons) {
+    var lines = [],
+        temp = [],
+        tempLen = 0;
+    var limit = 17;
+    for (var i = 0; i < persons.length; i++) {
+        if (tempLen + Q.len(persons[i]) > limit) {
+            lines.push(temp.join(', ') + ',');
+            temp = [];
+            tempLen = 0;
+        }
+        temp.push(persons[i]);
+        tempLen += Q.len(persons[i]);
+        if (i === persons.length - 1) {
+            lines.push(temp.join(', '));
+            break;
+        }
+    }
+    return lines;
+};
+
 Q.genrateImgURL = function() {
     var bgUrl = 'http://zhuangbility.qiniudn.com/v2/whitebg.png',
         avaUrl = Q.avatarUrl ? Q.avatarUrl + '-ava' : 'http://zhuangbility.qiniudn.com/ava.jpg-ava',
         bubbleheadUrl = 'http://zhuangbility.qiniudn.com/bubblehead.png',
         bubblefootUrl = 'http://zhuangbility.qiniudn.com/v1/bubblefoot.png',
-        like1Url = 'http://zhuangbility.qiniudn.com/like1.png',
-        like2Url = 'http://zhuangbility.qiniudn.com/like2.png',
-        cutlineUrl = 'http://zhuangbility.qiniudn.com/cutline.png',
-        commentUrl = 'http://zhuangbility.qiniudn.com/comment.png';
 
-    var FONT = '微软雅黑';
-    var NAME_SIZE = 32,
-        POST_SIZE = 28,
-        LIKE_SIZE = 26,
-        COMMENT_SIZE = 26;
-
-    var d = function(x, y) {
-        return '/dx/' + x + '/dy/' + y + '/gravity/NorthWest';
-    };
-    var image = function(url, dx, dy) {
-        return '/image/' + Q.URLSafeBase64Encode(url) + d(dx, dy);
-    };
-    var text = function(str, font, size, color, dx, dy) {
-        var text = Q.URLSafeBase64Encode(str),
-            f = Q.URLSafeBase64Encode(font),
-            c = Q.URLSafeBase64Encode(color);
-        return '/text/' + text + '/font/' + f + '/fontsize/' + size * 20 + '/fill/' + c + d(dx, dy);
-    };
-
-    var renderName = function(name) {
-        return text(name, FONT, NAME_SIZE, '#506992', 122, 132);
-    };
-    var renderPost = function(lines, oy) {
-        var result = '';
-        var y = oy;
-        for (var i = 0; i < lines.length; i++) {
-            result += text(lines[i], FONT, POST_SIZE, 'black', 122, y + i * 33);
-        }
-        return result;
-    };
-    var getStyleAndDy = function() {
-        var result = {
-            styleName: ''
-        };
-        var w = Q.photoSize.width,
-            h = Q.photoSize.height;
-        if (w > 570 || h > 400) {
-            if (w / h > 570 / 400) {
-                result.styleName = '-phw';
-                result.dy = 570 * h / w;
-            } else if (w / h < 570 / 400) {
-                result.styleName = '-phh';
-                result.dy = 400;
-            } else {
-                result.styleName = '-phfull';
-                result.dy = 400;
-            }
-        } else if (w > 0 && h > 0) {
-            result.dy = h;
-        }
-        return result;
-    };
-    var renderLike = function(lines, oy) {
-        var result = '';
-        for (var i = 0; i < lines.length; i++) {
-            result += image(i === 0 ? like1Url : like2Url, 122, oy + i * 33);
-            result += text(lines[i], FONT, LIKE_SIZE, '#506991', i === 0 ? 178 : 134, oy - 5 + i * 33);
-        }
-        return result;
-    };
-    var renderComment = function(comments, oy) {
-        var firstLine = function(name, src, dx, dy) {
-            var result = '';
-            var nameLen = name.length;
-            result += image(commentUrl, 122, dy);
-            result += text(name, FONT, COMMENT_SIZE, '#556d93', dx, dy);
-            result += text(': ' + src, FONT, COMMENT_SIZE, '#3d3b3c', dx + COMMENT_SIZE * nameLen, dy);
-            return result;
-        };
-        var firstLineReply = function(namea, nameb, src, dx, dy) {
-            var result = '';
-            var nameLena = namea.length,
-                nameLenb = nameb.length;
-            var x = dx;
-
-            result += image(commentUrl, 122, dy);
-            result += text(namea, FONT, COMMENT_SIZE, '#556d93', x, dy);
-            x += COMMENT_SIZE * nameLena + 2;
-            result += text('回复', FONT, COMMENT_SIZE, '#3d3b3c', x, dy);
-            x += COMMENT_SIZE * 2 + 2;
-            result += text(nameb, FONT, COMMENT_SIZE, '#556d93', x, dy);
-            x += COMMENT_SIZE * nameLenb;
-            result += text(': ' + src, FONT, COMMENT_SIZE, '#3d3b3c', x, dy);
-            return result;
-        };
-        var allLine = function(src, dx, dy) {
-            var result = '';
-            result += image(commentUrl, 122, dy);
-            result += text(src, FONT, COMMENT_SIZE, '#3d3b3c', dx, dy);
-            return result;
-        };
-
-        var result = '';
-        var y = oy;
-        for (var i = 0; i < comments.length; i++) {
-            var nameLen = 0;
-            var comLines = [];
-            if (comments[i].length === 3) {
-                var namea = comments[i][0],
-                    nameb = comments[i][1];
-                nameLen = len(namea) + len(nameb) + 2;
-                comLines = split2line(comments[i][2], 20, nameLen);
-                result += firstLineReply(namea, nameb, comLines[0], 134, y);
-            } else {
-                var name = comments[i][0];
-                nameLen = len(name);
-                comLines = split2line(comments[i][1], 20, nameLen);
-                result += firstLine(name, comLines[0], 134, y);
-            }
-            y += 40;
-            commentLineNum++;
-            if (comLines.length > 1) {
-                for (var j = 1; j < comLines.length; j++) {
-                    result += allLine(comLines[j], 134, y);
-                    y += 40;
-                    commentLineNum++;
-                }
-            }
-        }
-        return result;
-    };
-
-    var len = function(str) {
-        var flag = 0,
-            len = 0;
-        for (var i = 0; i < str.length; i++) {
-            if (/[A-Za-z0-9]/.test(str[i])) {
-                if (flag === 1) len++;
-                flag = (flag + 1) % 2;
-            } else {
-                len++;
-            }
-        }
-        return len + flag;
-    };
-    var split2line = function(post, linesize, offset) {
-        var msg = post,
-            limit = linesize - offset,
-            lines = [];
-        var flag = 0;
-        var count = 0;
-        for (var i = 0; i < msg.length; i++) {
-            if (/[A-Za-z0-9]/.test(msg[i])) {
-                if (flag === 0) limit++;
-                flag = (flag + 1) % 2;
-            }
-            if (count === limit) {
-                lines.push(msg.slice(i - limit, i));
-                limit = linesize;
-                count = 0;
-                count++;
-            } else if (i === msg.length - 1) {
-                lines.push(msg.slice(i - count, i + 1));
-                break;
-            } else {
-                count++;
-            }
-        }
-        return lines;
-    };
-
-    var split2LikeLine = function(persons) {
-        var lines = [],
-            temp = [],
-            tempLen = 0;
-        var limit = 19;
-        for (var i = 0; i < persons.length; i++) {
-            if (tempLen + len(persons[i]) > limit) {
-                lines.push(temp.join(', ') + ',');
-                temp = [];
-                tempLen = 0;
-            }
-            temp.push(persons[i]);
-            tempLen += len(persons[i]);
-            if (i === persons.length - 1) {
-                lines.push(temp.join(', '));
-                break;
-            }
-        }
-        return lines;
-    };
+        cutlineUrl = 'http://zhuangbility.qiniudn.com/cutline.png';
 
     var getName = function() {
         return document.getElementById('name').value;
@@ -478,32 +509,36 @@ Q.genrateImgURL = function() {
     };
 
     var renderList = [];
-    var scanLine = 184;
-    var avatar = image(avaUrl, 24, 138);
+    var scanLine = 132;
+
+    // step 1: render avatar
+    var avatar = Q.renderAvatar(avaUrl, 138);
     renderList.push(avatar);
 
+    // step 2: render name
     var nameTxt = getName();
-    console.log(nameTxt);
-    var name = renderName(nameTxt);
+    var name = Q.renderName(nameTxt, scanLine);
     renderList.push(name);
+    scanLine += 52;
 
+    // step 3: render post
     var postMsg = getPost();
-    console.log(postMsg);
-    var postLines = split2line(postMsg, 20, 0);
-    var post = renderPost(postLines, scanLine);
+    var post = Q.renderPost(postMsg, scanLine);
     scanLine += 33 * postLines.length + 26;
     renderList.push(post);
 
+    // step 4: render photo
     if (Q.photoUrl !== '') {
-        var ret = getStyleAndDy();
-        var photo = image(Q.photoUrl + ret.styleName, 122, scanLine);
+        console.log('photo', scanLine);
+        var ret = Q.getStyleAndDy();
+        var photo = Q.image(Q.photoUrl + ret.styleName, 122, scanLine);
         scanLine += ret.dy + 16;
         console.log(ret);
         console.log(Q.photoUrl + ret.styleName);
         renderList.push(photo);
     }
 
-    var bubblehead = image(bubbleheadUrl, 122, scanLine);
+    var bubblehead = Q.image(bubbleheadUrl, 122, scanLine);
     scanLine += 60;
     renderList.push(bubblehead);
 
@@ -511,32 +546,66 @@ Q.genrateImgURL = function() {
     console.log(persons);
 
     // persons.push('七牛云存储');
-    var likeLines = split2LikeLine(persons);
-    var likes = renderLike(likeLines, scanLine); // TODO
+    var likeLines = Q.split2LikeLine(persons);
+    var likes = Q.renderLike(likeLines, scanLine); // TODO
     scanLine += likeLines.length * 33;
     renderList.push(likes);
 
     var commentLineNum = 0;
     var commentsList = getComments();
     if (commentsList.length > 0) {
-        var cutline = image(cutlineUrl, 122, scanLine);
+        var cutline = Q.image(cutlineUrl, 122, scanLine);
         scanLine += 14;
         renderList.push(cutline);
         console.log(commentsList);
-        var comments = renderComment(commentsList, scanLine); // TODO
+        var comments = Q.renderComment(commentsList, scanLine); // TODO
         scanLine += commentLineNum * 40;
         renderList.push(comments);
     }
 
 
-    var bubblefoot = image(bubblefootUrl, 0, scanLine);
+    var bubblefoot = Q.image(bubblefootUrl, 0, scanLine);
     scanLine += 40;
     renderList.push(bubblefoot);
 
     // return bgUrl;
     var imageUrl = bgUrl + '?watermark/3' + renderList.join('');
-    var finalUrl = imageUrl + '|imageMogr2/crop/720x' + scanLine + '';
     return imageUrl;
+};
+
+Q.loadTemplate = function(template) {
+    var name = $('#name').val() || '我';
+    var fillPost = function(post) {
+        $('#post').val(post);
+    };
+    var fillLikes = function(persons) {
+        var i = 0;
+        $('.like').each(function(index) {
+            if (i >= persons.length) {
+                return;
+            }
+            $(this).val(persons[i++]);
+        });
+    };
+    var fillComments = function(comments) {
+        var i = 0;
+        $('.comment').each(function(index) {
+            if (i >= comments.length) {
+                return;
+            }
+            $(this).find('.namea').val(comments[i][0].replace('$name', name));
+            if (comments[i].length === 3) {
+                $(this).find('.nameb').val(comments[i][1].replace('$name', name));
+                $(this).find('.msg').val(comments[i][2]);
+            } else {
+                $(this).find('.msg').val(comments[i][1]);
+            }
+            i++;
+        });
+    };
+    fillPost(template.post);
+    fillLikes(template.persons);
+    fillComments(template.comments);
 };
 
 Q.initPluploader = function(browse_button_id, container_id, progress_id, error_id) {
@@ -544,7 +613,7 @@ Q.initPluploader = function(browse_button_id, container_id, progress_id, error_i
         runtimes: 'html5,flash,silverlight,html4',
         browse_button: document.getElementById(browse_button_id),
         container: document.getElementById(container_id),
-        max_file_size: '5mb',
+        max_file_size: '100mb',
         url: 'http://up.qiniu.com',
         flash_swf_url: 'js/plupload/Moxie.swf',
         silverlight_xap_url: 'js/plupload/Moxie.xap',
@@ -639,8 +708,8 @@ Q.imgReady = (function() {
             var i = 0;
             for (; i < list.length; i++) {
                 list[i].end ? list.splice(i--, 1) : list[i]();
-            };
-            !list.length && stop();
+            }
+            (!list.length) && stop();
         },
 
         // 停止所有定时器队列
@@ -681,7 +750,7 @@ Q.imgReady = (function() {
             ) {
                 ready.call(img);
                 onready.end = true;
-            };
+            }
         };
         onready();
 
@@ -705,13 +774,18 @@ Q.imgReady = (function() {
 })();
 
 
-window.onload = function() {
+$(function() {
     Q.initPluploader('uploadAvatar', 'upload-wrapper-1', 'progess-1', 'error-1');
     Q.initPluploader('uploadPhoto', 'upload-wrapper-2', 'progess-2', 'error-2');
-    document.getElementById('btn').onclick = function() {
+    $('#btn').on('click', function() {
         var img = document.getElementById('demo');
         var src = Q.genrateImgURL();
+        console.log('src len:', src.length);
+        alert('src len:' + src.length);
         img.src = src;
         // window.location.href = src;
-    };
-};
+    });
+    $('#load').on('click', function() {
+        Q.loadTemplate(Q.template.newyear);
+    });
+});
