@@ -3,57 +3,81 @@ extends layout
 block content
   .container
     .row
-      .col-md-12.col-xs-12
-        h1 LET'S ZHUANGB
-        h2: small QINIU Watermark Demo
-        br
-    .row
-      .col-md-4.col-xs-12
-        h4 设置昵称：
+      .col-md-offset-4.col-md-4
         .row
-          .col-md-12.form-group
-            input#name.form-control(placeholder='七牛云存储', value='')
-          #upload-wrapper-1.col-md-12.form-group
-            button#uploadAvatar.btn.btn-primary.btn-block 上传头像
-            #progess-1
-            #error-1
+          //- .col-md-12
+          img.cover(src='/img/cover1.png')
+          //- .col-md-12
+          img.cover(src='/img/cover2.png')
 
-        h4 发表文字:
-        .row
-          .col-md-12.form-group
-            textarea#post.form-control(placeholder='七牛云存储是世界上最好的云存储', row='5', value='')
-          #upload-wrapper-2.col-md-12.form-group
-            button#uploadPhoto.btn.btn-primary.btn-block 上传照片
-            #progess-2
-            #error-2
+          .col-md-12
+            h1 LET'S ZHUANGB
+            h4: small QINIU Watermark Demo
+            h4 请选择装逼场景
+            button#load.btn.btn-primary.btn-lg.btn-block 春节度假装逼版
+            button#load.btn.btn-primary.btn-lg.btn-block 春晚吐槽装逼版
+            button#load.btn.btn-primary.btn-lg.btn-block 土豪红包装逼版
 
-      .col-md-4.col-xs-12
-        h4 设置点赞人员:
-        #likes.likes.row
-          - for (var i = 0; i < 8; i++)
-            .form-group.col-md-12.col-sm-6
-              input.like.form-control
-        button#add-like.btn.btn-primary.btn-block(type='button') 添加点赞人员
+          .col-md-12
+            h4 设置昵称：
+            .row
+              .col-md-12.form-group
+                input#name.form-control(placeholder='七牛云存储', value='')
+              #upload-wrapper-1.col-md-12.form-group
+                button#uploadAvatar.btn.btn-primary.btn-block 上传头像
+                #progess-1
+                #error-1
 
-      .col-md-4.col-xs-12
-        h4 设置评论:
-        #comments.comments
-          - for (var i = 0; i < 3; i++)
-            .comment.form-group
-              .row
-                .col-xs-6
-                  label.control-label name 1:
-                  input.namea.form-control
-                .col-xs-6
-                  label.control-label name 2:
-                  input.nameb.form-control
-                .col-xs-12
-                  label.control-label msg:
-                  input.msg.form-control
-        button#add-comment.btn.btn-primary.btn-block(type='button') 添加评论
+            h4 发表文字:
+            .row
+              .col-md-12.form-group
+                textarea#post.form-control(placeholder='七牛云存储是世界上最好的云存储', row='5', value='')
+              #upload-wrapper-2.col-md-12.form-group
+                button#uploadPhoto.btn.btn-primary.btn-block 上传照片
+                #progess-2
+                #error-2
 
-    .row
-      .col-md-offset-3.col-md-6.col-xs-12
-        button#btn.btn.btn-success.btn-lg.btn-block Let's ZhuangB!
-        button#load.btn.btn-primary load
-        img#demo(src='', style='border:2px solid grey')
+          .col-md-12
+            h4 设置点赞人员:
+            #likes.likes.row
+              - for (var i = 0; i < 4; i++)
+                .form-group.col-md-6
+                  input.like.form-control(placeholder='姓名')
+            button#add-like.btn.btn-primary.btn-block(type='button') 添加点赞人员
+
+          .col-md-12
+            h4 设置评论:
+            #comments.comments
+              - for (var i = 0; i < 3; i++)
+                .comment.form-group
+                  .row
+                    .col-xs-6
+                      input.namea.form-control(placeholder='姓名1')
+                    .col-xs-6
+                      input.nameb.form-control(placeholder='姓名2')
+                    .col-xs-12
+                      input.msg.form-control(placeholder='评论')
+            button#add-comment.btn.btn-primary.btn-block(type='button') 添加评论
+
+          .col-md-12.col-xs-12
+            button#btn.btn.btn-success.btn-lg.btn-block Let's ZhuangB!
+            button#load.btn.btn-primary load
+            img#demo(src='', style='border:2px solid grey')
+
+//- block content
+//-   .phone-view
+//-     .page#page1
+//-       img.cover(src='/img/cover1.png')
+//-     .page#page2
+//-       img.cover(src='/img/cover2.png')
+//-     .page#page3
+//-       h4 请选择装逼场景
+//-       button#load.btn.btn-primary 春节度假装逼版
+//-       button#load.btn.btn-primary 春晚吐槽装逼版
+//-       button#load.btn.btn-primary 土豪红包装逼版
+//-     .page#page4
+//-       h4 请选择装逼场景2
+//-     .page#page5
+//-       h4 请选择装逼场景3
+//-     .page#page6
+//-       h4 请选择装逼场景4

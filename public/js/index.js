@@ -839,4 +839,14 @@ $(function() {
     $('#add-comment').on('click', function() {
         addComment();
     });
+    $('.page').on('swipeleft', function() {
+        if ($(this).next().length > 0) {
+            $(this).hide().next().show();
+        }
+    });
+    $('.page').on('swiperight', function() {
+        if ($(this).prev().length > 0) {
+            $(this).hide().prev().show();
+        }
+    });
 });
