@@ -1,39 +1,59 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
-  label name:
-    input#name(value='')
-  br
-  #upload-wrapper-1
-    button#uploadAvatar upload avatar
-    #progess-1
-    #error-1
-  label post:
-    input#post(value='')
-  br
-  #upload-wrapper-2
-    button#uploadPhoto upload photo
-    #progess-2
-    #error-2
+  .container
+    .row
+      .col-md-12.col-xs-12
+        h1 LET'S ZHUANGB
+        h2: small QINIU Watermark Demo
+        br
+    .row
+      .col-md-4.col-xs-12
+        h4 设置昵称：
+        .row
+          .col-md-12.form-group
+            input#name.form-control(placeholder='七牛云存储', value='')
+          #upload-wrapper-1.col-md-12.form-group
+            button#uploadAvatar.btn.btn-primary.btn-block 上传头像
+            #progess-1
+            #error-1
 
-  .likes
-    p likes:
-    - for (var i = 0; i < 16; i++)
-      input.like
+        h4 发表文字:
+        .row
+          .col-md-12.form-group
+            textarea#post.form-control(placeholder='七牛云存储是世界上最好的云存储', row='5', value='')
+          #upload-wrapper-2.col-md-12.form-group
+            button#uploadPhoto.btn.btn-primary.btn-block 上传照片
+            #progess-2
+            #error-2
 
-  .comments
-    p comments
-    - for (var i = 0; i < 16; i++)
-      .comment
-        span name1:
-        input.namea
-        span name2:
-        input.nameb
-        span msg:
-        input.msg
+      .col-md-4.col-xs-12
+        h4 设置点赞人员:
+        #likes.likes.row
+          - for (var i = 0; i < 8; i++)
+            .form-group.col-md-12.col-sm-6
+              input.like.form-control
+        button#add-like.btn.btn-primary.btn-block(type='button') 添加点赞人员
 
-  button#btn Let's ZhuangB!
-  button#load load
-  img#demo(src='', style='border:2px solid grey')
+      .col-md-4.col-xs-12
+        h4 设置评论:
+        #comments.comments
+          - for (var i = 0; i < 3; i++)
+            .comment.form-group
+              .row
+                .col-xs-6
+                  label.control-label name 1:
+                  input.namea.form-control
+                .col-xs-6
+                  label.control-label name 2:
+                  input.nameb.form-control
+                .col-xs-12
+                  label.control-label msg:
+                  input.msg.form-control
+        button#add-comment.btn.btn-primary.btn-block(type='button') 添加评论
+
+    .row
+      .col-md-offset-3.col-md-6.col-xs-12
+        button#btn.btn.btn-success.btn-lg.btn-block Let's ZhuangB!
+        button#load.btn.btn-primary load
+        img#demo(src='', style='border:2px solid grey')

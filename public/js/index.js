@@ -26,7 +26,7 @@ Q.template = {
             ['韩寒', '郭敬明', '小四，“萌”你比不过我哦！'],
             ['冯小刚', '你丫看春晚怎么不吐槽！'],
             ['李娜', '我从来没想过在中国以外的地方生活，因为我小时候在国外打球训练，所以我不知道']
-        ],
+        ]
     }
 };
 
@@ -284,38 +284,10 @@ Q.image = function(url, dx, dy) {
     return '/image/' + Q.URLSafeBase64Encode(url) + Q.d(dx, dy);
 };
 
-Q.renderAvatar = function(url, dy) {
-    return Q.image(url, 24, dy);
-};
-
-Q.renderName = function(name, dy) {
-    return Q.text(name, FONT, NAME_SIZE, '#506992', 122, dy);
-};
-
-Q.renderPost = function(postMsg, oy) {
-    var lines = Q.split2line(postMsg, 20, 0);
-    var result = '';
-    var y = oy;
-    for (var i = 0; i < lines.length; i++) {
-        result += Q.text(lines[i], FONT, POST_SIZE, 'black', 122, y + i * 33);
-    }
-    return result;
-};
-
-Q.renderLike = function(lines, oy) {
-    var like1Url = 'http://zhuangbility.qiniudn.com/like1.png',
-        like2Url = 'http://zhuangbility.qiniudn.com/like2.png';
-    var result = '';
-    for (var i = 0; i < lines.length; i++) {
-        result += Q.image(i === 0 ? like1Url : like2Url, 122, oy + i * 33);
-        result += Q.text(lines[i], FONT, LIKE_SIZE, '#506991', i === 0 ? 178 : 134, oy - 5 + i * 33);
-    }
-    return result;
-};
-
 Q.getStyleAndDy = function() {
     var result = {
-        styleName: ''
+        styleName: '',
+        dy: 0
     };
     var w = Q.photoSize.width,
         h = Q.photoSize.height;
@@ -334,69 +306,6 @@ Q.getStyleAndDy = function() {
         result.dy = h;
     }
     result.dy = Math.floor(result.dy) + 1;
-    return result;
-};
-
-Q.renderComment = function(comments, oy) {
-    var commentUrl = 'http://zhuangbility.qiniudn.com/comment.png';
-    var firstLine = function(name, src, dx, dy) {
-        var result = '';
-        var nameLen = Q.len(name);
-        result += Q.image(commentUrl, 122, dy);
-        result += Q.text(name, FONT, COMMENT_SIZE, '#556d93', dx, dy);
-        result += Q.text(': ' + src, FONT, COMMENT_SIZE, '#3d3b3c', dx + COMMENT_SIZE * nameLen, dy);
-        return result;
-    };
-    var firstLineReply = function(namea, nameb, src, dx, dy) {
-        var result = '';
-        var nameLena = Q.len(namea),
-            nameLenb = Q.len(nameb);
-        var x = dx;
-
-        result += Q.image(commentUrl, 122, dy);
-        result += Q.text(namea, FONT, COMMENT_SIZE, '#556d93', x, dy);
-        x += COMMENT_SIZE * nameLena + 2;
-        result += Q.text('回复', FONT, COMMENT_SIZE, '#3d3b3c', x, dy);
-        x += COMMENT_SIZE * 2 + 2;
-        result += Q.text(nameb, FONT, COMMENT_SIZE, '#556d93', x, dy);
-        x += COMMENT_SIZE * nameLenb;
-        result += Q.text(': ' + src, FONT, COMMENT_SIZE, '#3d3b3c', x, dy);
-        return result;
-    };
-    var allLine = function(src, dx, dy) {
-        var result = '';
-        result += Q.image(commentUrl, 122, dy);
-        result += Q.text(src, FONT, COMMENT_SIZE, '#3d3b3c', dx, dy);
-        return result;
-    };
-
-    var result = '';
-    var y = oy;
-    for (var i = 0; i < comments.length; i++) {
-        var nameLen = 0;
-        var comLines = [];
-        if (comments[i].length === 3) {
-            var namea = comments[i][0],
-                nameb = comments[i][1];
-            nameLen = Q.len(namea) + Q.len(nameb) + 2;
-            comLines = Q.split2line(comments[i][2], 20, nameLen);
-            result += firstLineReply(namea, nameb, comLines[0], 134, y);
-        } else {
-            var name = comments[i][0];
-            nameLen = Q.len(name);
-            comLines = Q.split2line(comments[i][1], 20, nameLen);
-            result += firstLine(name, comLines[0], 134, y);
-        }
-        y += 40;
-        commentLineNum++;
-        if (comLines.length > 1) {
-            for (var j = 1; j < comLines.length; j++) {
-                result += allLine(comLines[j], 134, y);
-                y += 40;
-                commentLineNum++;
-            }
-        }
-    }
     return result;
 };
 
@@ -458,154 +367,6 @@ Q.split2LikeLine = function(persons) {
         }
     }
     return lines;
-};
-
-Q.genrateImgURL = function() {
-    var bgUrl = 'http://zhuangbility.qiniudn.com/v2/whitebg.png',
-        avaUrl = Q.avatarUrl ? Q.avatarUrl + '-ava' : 'http://zhuangbility.qiniudn.com/ava.jpg-ava',
-        bubbleheadUrl = 'http://zhuangbility.qiniudn.com/bubblehead.png',
-        bubblefootUrl = 'http://zhuangbility.qiniudn.com/v1/bubblefoot.png',
-
-        cutlineUrl = 'http://zhuangbility.qiniudn.com/cutline.png';
-
-    var getName = function() {
-        return document.getElementById('name').value;
-    };
-    var getPost = function() {
-        return document.getElementById('post').value;
-    };
-    var getPerson = function() {
-        var likes = document.getElementsByClassName('like');
-        var p = [];
-        for (var i = 0; i < likes.length; i++) {
-            if (likes[i].value !== '') {
-                p.push(likes[i].value);
-            }
-        }
-        return p;
-    };
-    var getComments = function() {
-        var comments = document.getElementsByClassName('comment');
-        var c = [];
-        for (var i = 0; i < comments.length; i++) {
-            var namea = comments[i].getElementsByClassName('namea')[0].value,
-                nameb = comments[i].getElementsByClassName('nameb')[0].value,
-                msg = comments[i].getElementsByClassName('msg')[0].value;
-            var line = [];
-            if (namea !== '') {
-                line.push(namea);
-                if (nameb !== '') {
-                    line.push(nameb);
-                }
-                if (msg !== '') {
-                    line.push(msg);
-                }
-            }
-            if (line.length > 0) {
-                c.push(line);
-            }
-        }
-        return c;
-    };
-
-    var renderList = [];
-    var scanLine = 132;
-
-    // step 1: render avatar
-    var avatar = Q.renderAvatar(avaUrl, 138);
-    renderList.push(avatar);
-
-    // step 2: render name
-    var nameTxt = getName();
-    var name = Q.renderName(nameTxt, scanLine);
-    renderList.push(name);
-    scanLine += 52;
-
-    // step 3: render post
-    var postMsg = getPost();
-    var post = Q.renderPost(postMsg, scanLine);
-    scanLine += 33 * postLines.length + 26;
-    renderList.push(post);
-
-    // step 4: render photo
-    if (Q.photoUrl !== '') {
-        console.log('photo', scanLine);
-        var ret = Q.getStyleAndDy();
-        var photo = Q.image(Q.photoUrl + ret.styleName, 122, scanLine);
-        scanLine += ret.dy + 16;
-        console.log(ret);
-        console.log(Q.photoUrl + ret.styleName);
-        renderList.push(photo);
-    }
-
-    var bubblehead = Q.image(bubbleheadUrl, 122, scanLine);
-    scanLine += 60;
-    renderList.push(bubblehead);
-
-    var persons = getPerson();
-    console.log(persons);
-
-    // persons.push('七牛云存储');
-    var likeLines = Q.split2LikeLine(persons);
-    var likes = Q.renderLike(likeLines, scanLine); // TODO
-    scanLine += likeLines.length * 33;
-    renderList.push(likes);
-
-    var commentLineNum = 0;
-    var commentsList = getComments();
-    if (commentsList.length > 0) {
-        var cutline = Q.image(cutlineUrl, 122, scanLine);
-        scanLine += 14;
-        renderList.push(cutline);
-        console.log(commentsList);
-        var comments = Q.renderComment(commentsList, scanLine); // TODO
-        scanLine += commentLineNum * 40;
-        renderList.push(comments);
-    }
-
-
-    var bubblefoot = Q.image(bubblefootUrl, 0, scanLine);
-    scanLine += 40;
-    renderList.push(bubblefoot);
-
-    // return bgUrl;
-    var imageUrl = bgUrl + '?watermark/3' + renderList.join('');
-    return imageUrl;
-};
-
-Q.loadTemplate = function(template) {
-    var name = $('#name').val() || '我';
-    var fillPost = function(post) {
-        $('#post').val(post);
-    };
-    var fillLikes = function(persons) {
-        var i = 0;
-        $('.like').each(function(index) {
-            if (i >= persons.length) {
-                return;
-            }
-            $(this).val(persons[i++]);
-        });
-    };
-    var fillComments = function(comments) {
-        var i = 0;
-        $('.comment').each(function(index) {
-            if (i >= comments.length) {
-                return;
-            }
-            $(this).find('.namea').val(comments[i][0].replace('$name', name));
-            if (comments[i].length === 3) {
-                $(this).find('.nameb').val(comments[i][1].replace('$name', name));
-                $(this).find('.msg').val(comments[i][2]);
-            } else {
-                $(this).find('.msg').val(comments[i][1]);
-            }
-            i++;
-        });
-    };
-    fillPost(template.post);
-    fillLikes(template.persons);
-    fillComments(template.comments);
 };
 
 Q.initPluploader = function(browse_button_id, container_id, progress_id, error_id) {
@@ -695,7 +456,7 @@ Q.initPluploader = function(browse_button_id, container_id, progress_id, error_i
                 console.log(Q.photoSize);
             }, null, null);
         }
-        document.getElementById(progress_id).innerHTML = link + res.key + '    上传成功';
+        document.getElementById(progress_id).innerHTML = '上传成功';
     });
 };
 
@@ -775,17 +536,307 @@ Q.imgReady = (function() {
 
 
 $(function() {
+    var getName = function() {
+        return document.getElementById('name').value;
+    };
+    var getPost = function() {
+        return document.getElementById('post').value;
+    };
+    var getPerson = function() {
+        var likes = document.getElementsByClassName('like');
+        var p = [];
+        for (var i = 0; i < likes.length; i++) {
+            if (likes[i].value !== '') {
+                p.push(likes[i].value);
+            }
+        }
+        return p;
+    };
+    var getComments = function() {
+        var comments = document.getElementsByClassName('comment');
+        var c = [];
+        for (var i = 0; i < comments.length; i++) {
+            var namea = comments[i].getElementsByClassName('namea')[0].value,
+                nameb = comments[i].getElementsByClassName('nameb')[0].value,
+                msg = comments[i].getElementsByClassName('msg')[0].value;
+            var line = [];
+            if (namea !== '') {
+                line.push(namea);
+                if (nameb !== '') {
+                    line.push(nameb);
+                }
+                if (msg !== '') {
+                    line.push(msg);
+                }
+            }
+            if (line.length > 0) {
+                c.push(line);
+            }
+        }
+        return c;
+    };
+    // render functions
+    // ------------------------------------------------
+    var render = {};
+    render.avatar = function(url, dy) {
+        return {
+            url: url ? Q.image(url + '-ava', 24, dy) : '',
+            h: 72
+        };
+    };
+    render.name = function(name, dy) {
+        return {
+            url: Q.text(name, FONT, NAME_SIZE, '#506992', 122, dy),
+            h: 52
+        };
+    };
+    render.post = function(postMsg, oy) {
+        var y = oy,
+            result = '',
+            lines = Q.split2line(postMsg, 20, 0);
+        for (var i = 0; i < lines.length; i++) {
+            result += Q.text(lines[i], FONT, POST_SIZE, 'black', 122, y + i * 33);
+        }
+        return {
+            url: result,
+            h: lines.length * 33
+        };
+    };
+    render.photo = function(url, dy) {
+        var ret = Q.getStyleAndDy(),
+            photo = url ? Q.image(url + ret.styleName, 122, dy) : '';
+        return {
+            url: photo,
+            h: ret.dy
+        };
+    };
+    render.bubblehead = function(dy) {
+        var bubbleheadUrl = 'http://zhuangbility.qiniudn.com/bubblehead.png';
+        return {
+            url: Q.image(bubbleheadUrl, 122, dy),
+            h: 60
+        };
+    };
+    render.likes = function(persons, oy) {
+        var like1Url = 'http://zhuangbility.qiniudn.com/like1.png',
+            like2Url = 'http://zhuangbility.qiniudn.com/like2.png',
+            result = '';
+        var lines = Q.split2LikeLine(persons);
+        for (var i = 0; i < lines.length; i++) {
+            result += Q.image(i === 0 ? like1Url : like2Url, 122, oy + i * 33);
+            result += Q.text(lines[i], FONT, LIKE_SIZE, '#506991', i === 0 ? 178 : 134, oy - 5 + i * 33);
+        }
+        return {
+            url: result,
+            h: lines.length * 33
+        };
+    };
+    render.cutline = function(dy) {
+        var cutlineUrl = 'http://zhuangbility.qiniudn.com/cutline.png';
+        return {
+            url: Q.image(cutlineUrl, 122, dy),
+            h: 14
+        };
+    };
+    render.comments = function(comments, oy) {
+        var commentUrl = 'http://zhuangbility.qiniudn.com/comment.png';
+        var firstLine = function(name, src, dx, dy) {
+            var result = '';
+            var nameLen = Q.len(name);
+            result += Q.image(commentUrl, 122, dy);
+            result += Q.text(name, FONT, COMMENT_SIZE, '#556d93', dx, dy);
+            result += Q.text(': ' + src, FONT, COMMENT_SIZE, '#3d3b3c', dx + COMMENT_SIZE * nameLen, dy);
+            return result;
+        };
+        var firstLineReply = function(namea, nameb, src, dx, dy) {
+            var result = '';
+            var nameLena = Q.len(namea),
+                nameLenb = Q.len(nameb);
+            var x = dx;
+
+            result += Q.image(commentUrl, 122, dy);
+            result += Q.text(namea, FONT, COMMENT_SIZE, '#556d93', x, dy);
+            x += COMMENT_SIZE * nameLena + 2;
+            result += Q.text('回复', FONT, COMMENT_SIZE, '#3d3b3c', x, dy);
+            x += COMMENT_SIZE * 2 + 2;
+            result += Q.text(nameb, FONT, COMMENT_SIZE, '#556d93', x, dy);
+            x += COMMENT_SIZE * nameLenb;
+            result += Q.text(': ' + src, FONT, COMMENT_SIZE, '#3d3b3c', x, dy);
+            return result;
+        };
+        var allLine = function(src, dx, dy) {
+            var result = '';
+            result += Q.image(commentUrl, 122, dy);
+            result += Q.text(src, FONT, COMMENT_SIZE, '#3d3b3c', dx, dy);
+            return result;
+        };
+
+        var result = '',
+            y = oy;
+        for (var i = 0; i < comments.length; i++) {
+            var nameLen = 0;
+            var comLines = [];
+            if (comments[i].length === 3) {
+                var namea = comments[i][0],
+                    nameb = comments[i][1];
+                nameLen = Q.len(namea) + Q.len(nameb) + 2;
+                comLines = Q.split2line(comments[i][2], 20, nameLen);
+                result += firstLineReply(namea, nameb, comLines[0], 134, y);
+            } else {
+                var name = comments[i][0];
+                nameLen = Q.len(name);
+                comLines = Q.split2line(comments[i][1], 20, nameLen);
+                result += firstLine(name, comLines[0], 134, y);
+            }
+            y += 40;
+            if (comLines.length > 1) {
+                for (var j = 1; j < comLines.length; j++) {
+                    result += allLine(comLines[j], 134, y);
+                    y += 40;
+                }
+            }
+        }
+        return {
+            url: result,
+            h: y
+        };
+    };
+    render.bubblefoot = function(dy) {
+        var bubblefootUrl = 'http://zhuangbility.qiniudn.com/v1/bubblefoot.png';
+        return {
+            url: Q.image(bubblefootUrl, 0, dy),
+            h: 40
+        };
+    };
+    var buildURL = function() {
+        var BG = 'http://zhuangbility.qiniudn.com/v2/whitebg.png';
+
+        var renderList = [],
+            scanLine = 132;
+
+        // step 1: render avatar
+        var avatar = render.avatar(Q.avatarUrl, 138);
+        renderList.push(avatar.url);
+
+        // step 2: render name
+        var nameTxt = getName();
+        var name = render.name(nameTxt, scanLine);
+        renderList.push(name.url);
+        scanLine += name.h;
+
+        // step 3: render post
+        var postMsg = getPost();
+        var post = render.post(postMsg, scanLine);
+        renderList.push(post.url);
+        scanLine += post.h + 26;
+
+        // step 4: render photo
+        var photo = render.photo(Q.photoUrl, scanLine);
+        renderList.push(photo.url);
+        scanLine += photo.h + 16;
+
+        // render bubblehead
+        var bubblehead = render.bubblehead(scanLine);
+        renderList.push(bubblehead.url);
+        scanLine += bubblehead.h;
+
+        // step 5: render likes
+        var persons = getPerson();
+        var likes = render.likes(persons, scanLine); // TODO
+        renderList.push(likes.url);
+        scanLine += likes.h;
+
+        // step 6: render comments
+        var commentsList = getComments();
+        if (commentsList.length > 0) {
+            var cutline = render.cutline(scanLine);
+            renderList.push(cutline.url);
+            scanLine += cutline.h;
+
+            var comments = render.comments(commentsList, scanLine); // TODO
+            renderList.push(comments.url);
+            scanLine += comments.h;
+        }
+
+        // render bubblefoot
+        var bubblefoot = render.bubblefoot(scanLine);
+        renderList.push(bubblefoot.url);
+        scanLine += bubblefoot.h;
+
+        return BG + '?watermark/3' + renderList.join('');
+    };
+    // ------------------------------------------------
+    var addLike = function(n) {
+        var LIKE_TMPL = '<div class="form-group col-md-12 col-sm-6"><input class="like form-control"></div>';
+        var l = n || 1,
+            strEl = '';
+        for (var i = 0; i < l; i++) {
+            strEl += LIKE_TMPL;
+        }
+        $('#likes').append(strEl);
+    };
+    var addComment = function(n) {
+        var COMMENT_TMPL = '<div class="comment form-group"><div class="row"><div class="col-xs-6"><label class="control-label">name 1:</label><input class="namea form-control"></div><div class="col-xs-6"><label class="control-label">name 2:</label><input class="nameb form-control"></div><div class="col-xs-12"><label class="control-label">msg:</label><input class="msg form-control"></div></div></div>';
+        var l = n || 1,
+            strEl = '';
+        for (var i = 0; i < l; i++) {
+            strEl += COMMENT_TMPL;
+        }
+        $('#comments').append(strEl);
+    };
+    var loadTemplate = function(template) {
+        var name = $('#name').val();
+        var fillPost = function(post) {
+            $('#post').val(post);
+        };
+        var fillLikes = function(persons) {
+            $('#likes').html('');
+            addLike(persons.length);
+            var i = 0;
+            $('.like').each(function() {
+                if (i >= persons.length) {
+                    return;
+                }
+                $(this).val(persons[i++]);
+            });
+        };
+        var fillComments = function(comments) {
+            $('#comments').html('');
+            addComment(comments.length);
+            var i = 0;
+            $('.comment').each(function() {
+                if (i >= comments.length) {
+                    return;
+                }
+                $(this).find('.namea').val(comments[i][0].replace('$name', name));
+                if (comments[i].length === 3) {
+                    $(this).find('.nameb').val(comments[i][1].replace('$name', name));
+                    $(this).find('.msg').val(comments[i][2]);
+                } else {
+                    $(this).find('.msg').val(comments[i][1]);
+                }
+                i++;
+            });
+        };
+        fillPost(template.post);
+        fillLikes(template.persons);
+        fillComments(template.comments);
+    };
+
     Q.initPluploader('uploadAvatar', 'upload-wrapper-1', 'progess-1', 'error-1');
     Q.initPluploader('uploadPhoto', 'upload-wrapper-2', 'progess-2', 'error-2');
     $('#btn').on('click', function() {
         var img = document.getElementById('demo');
-        var src = Q.genrateImgURL();
-        console.log('src len:', src.length);
-        alert('src len:' + src.length);
+        var src = buildURL();
         img.src = src;
-        // window.location.href = src;
     });
     $('#load').on('click', function() {
-        Q.loadTemplate(Q.template.newyear);
+        loadTemplate(Q.template.newyear);
+    });
+    $('#add-like').on('click', function() {
+        addLike();
+    });
+    $('#add-comment').on('click', function() {
+        addComment();
     });
 });
