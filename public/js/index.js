@@ -5,7 +5,7 @@
 
 var Q = {};
 
-Q.avatarUrl = '';
+Q.avatarUrl = 'http://zhuangbility.qiniudn.com/default_avatar.jpg';
 Q.photoUrl = '';
 Q.photoSize = {
     width: 0,
@@ -13,19 +13,55 @@ Q.photoSize = {
 };
 Q.photoStyle = '';
 Q.template = {
-    newyear: {
-        post: '哥哥从南非给我带回来的5克拉蓝色钻石，可惜春节在夏威夷度假，玩的太high, 晒得有点黑~~偶朋友圈的小姐伙伴们，你们的春节假期怎么过？',
-        persons: ["李娜", "潘石屹", "任志强", "马云", "史玉柱", "庆丰包子铺", "郭敬明", "韩寒"],
+    temp1: {
+        post: '哥哥从南非给我带回来的5克拉蓝色钻石，可惜春节在夏威夷度假，晒得有点黑~~偶朋友圈的小伙伴们，你们春节假期怎么过？',
+        photo: 'http://zhuangbility.qiniudn.com/temp1.jpg',
+        persons: ['李娜', '潘石屹', '任志强', '马云', '庆丰包子铺', '小时代下的郭敬明', '韩寒', '新浪曹国伟'],
         comments: [
-            ['李娜', '我从来没想过在中国以外的地方生活，因为我小时候在国外打球训练，很不习惯，必须得回家。我还是回家“挤春运”吧！'],
-            ['$name', '李娜', '娜样精彩！'],
-            ['潘石屹', '我给乡亲卖苹果！义务代言家乡天水的苹果。网上很多人骂我，说我（代言“潘苹果”）赚了不少钱。我的代言、捧场完全是义务的，我没有赚钱，我还贴了钱。'],
-            ['任志强', '潘石屹', '别听小潘瞎忽悠！'],
-            ['庆丰包子铺', '奋笔疾书写文案：“庆丰包子铺酱肉包子”制作秘籍，“从庆丰包子铺的21元套餐看名人营销”以及“春节期间庆丰包子铺旅游团开团”。'],
-            ['郭敬明', '又是这样漫长而灰蒙蒙的冬季 - 我们的爱，恨，感动，伤怀。'],
-            ['韩寒', '郭敬明', '小四，“萌”你比不过我哦！'],
-            ['冯小刚', '你丫看春晚怎么不吐槽！'],
-            ['李娜', '我从来没想过在中国以外的地方生活，因为我小时候在国外打球训练，所以我不知道']
+            ['庆丰包子铺', '“庆丰包子铺旅游团开团，包子铺成热门景点”'],
+            ['小时代下的郭敬明', '又是这样漫长而灰蒙蒙的冬季—我们的爱，恨，感动，伤怀。'],
+            ['李云迪', '小时代下的郭敬明', '哥大的？'],
+            ['新浪曹国伟', '让“假期”飞！'],
+            ['马云', '新浪曹国伟', '玩扎堆“最爱春节旅游”吧！'],
+            ['冯小刚', '你丫看春晚怎么不吐槽！']
+        ]
+    },
+    temp2: {
+        post: '今年春晚还不错。',
+        photo: 'http://zhuangbility.qiniudn.com/temp2.jpg',
+        persons: ['蔡明', '撒贝宁', '朱军', '汪峰', '庆丰包子铺', '新浪曹国伟', '雷军', '章子怡', '张国立'],
+        comments: [
+            ['庆丰包子铺', '“一分钟春晚广告-论庆丰包子铺的加盟申请”'],
+            ['雷军', '庆丰包子铺', '兄弟，广告忒贵。'],
+            ['罗永浩', '罗永浩', '很简单，因为你是土鳖，没见过世面。'],
+            ['新浪曹国伟', '让“春晚穿帮镜头”飞！'],
+            ['马云', '新浪曹国伟', '去来往玩扎堆“最爱春晚”吧！'],
+            ['冯小刚', '你丫看春晚怎么不吐槽！']
+        ]
+    },
+    temp3: {
+        post: '给大家拜年，送新年红包了！每人21万，快来收~',
+        photo: 'http://zhuangbility.qiniudn.com/temp3.jpg',
+        persons: ['张小龙', '马化腾', '庆丰包子铺', '凤凰传奇', '汤唯', '新浪曹国伟', '马云', '汪峰', '章子怡'],
+        comments: [
+            ['庆丰包子铺', '“从庆丰包子铺的21元套餐看名人营销”'],
+            ['张小龙', '庆丰包子铺', '。。。'],
+            ['新浪曹国伟', '让“红包”飞！'],
+            ['张小龙', '新浪曹国伟', '。。。'],
+            ['汤唯', '21万？么么哒！'],
+            ['马云', '汤唯', '玩扎堆“最爱支付宝红包拜年”吧！'],
+            ['张小龙', '马云', '。。。'],
+            ['冯小刚', '你丫春晚重播了几十遍了，怎么还不吐槽！'],
+            ['我', '冯小刚', '滚！']
+        ]
+    },
+    temp4: {
+        post: '',
+        persons: ['', '', ''],
+        comments: [
+            ['', '', ''],
+            ['', '', ''],
+            ['', '', '']
         ]
     }
 };
@@ -322,6 +358,7 @@ Q.len = function(str) {
     }
     return len + flag;
 };
+
 Q.split2line = function(post, linesize, offset) {
     var msg = post,
         limit = linesize - offset,
@@ -446,18 +483,24 @@ Q.initPluploader = function(browse_button_id, container_id, progress_id, error_i
         var link = 'http://zhuangbility.qiniudn.com/';
         if (res.key.indexOf('avatar/') > -1) {
             Q.avatarUrl = link + res.key;
+            $('#avatar-preview').attr('src', Q.avatarUrl + '-ava');
         } else if (res.key.indexOf('photo/') > -1) {
-            Q.photoUrl = link + res.key;
-            console.log(Q.photoUrl);
-            Q.imgReady(Q.photoUrl, function() {
-                console.log(this.width, this.height);
-                Q.photoSize.width = this.width;
-                Q.photoSize.height = this.height;
-                console.log(Q.photoSize);
-            }, null, null);
+            Q.setPhoto(link + res.key);
         }
         document.getElementById(progress_id).innerHTML = '上传成功';
     });
+};
+
+Q.setPhoto = function(url) {
+    Q.photoUrl = url;
+    $('.photo-preview-wrapper').show().find('.info-text').text('加载中...');
+    Q.imgReady(Q.photoUrl, function() {
+        Q.photoSize.width = this.width;
+        Q.photoSize.height = this.height;
+    }, function() {
+        $('.photo-preview-wrapper').find('.info-text').text('预览：');
+        $('.photo-preview-wrapper').find('#photo-preview').attr('src', Q.photoUrl);
+    }, null);
 };
 
 Q.imgReady = (function() {
@@ -611,7 +654,7 @@ $(function() {
         };
     };
     render.bubblehead = function(dy) {
-        var bubbleheadUrl = 'http://zhuangbility.qiniudn.com/bubblehead.png';
+        var bubbleheadUrl = 'http://zhuangbility.qiniudn.com/v3/bubblehead.png';
         return {
             url: Q.image(bubbleheadUrl, 122, dy),
             h: 60
@@ -698,7 +741,7 @@ $(function() {
         }
         return {
             url: result,
-            h: y
+            h: y - oy
         };
     };
     render.bubblefoot = function(dy) {
@@ -709,7 +752,7 @@ $(function() {
         };
     };
     var buildURL = function() {
-        var BG = 'http://zhuangbility.qiniudn.com/v2/whitebg.png';
+        var BG = 'http://zhuangbility.qiniudn.com/v5/whitebg.png';
 
         var renderList = [],
             scanLine = 132;
@@ -720,12 +763,20 @@ $(function() {
 
         // step 2: render name
         var nameTxt = getName();
+        if (nameTxt === '') {
+            alert('请设置昵称');
+            return;
+        }
         var name = render.name(nameTxt, scanLine);
         renderList.push(name.url);
         scanLine += name.h;
 
         // step 3: render post
         var postMsg = getPost();
+        if (postMsg === '') {
+            alert('请设置发表文字');
+            return;
+        }
         var post = render.post(postMsg, scanLine);
         renderList.push(post.url);
         scanLine += post.h + 26;
@@ -767,7 +818,7 @@ $(function() {
     };
     // ------------------------------------------------
     var addLike = function(n) {
-        var LIKE_TMPL = '<div class="form-group col-md-12 col-sm-6"><input class="like form-control"></div>';
+        var LIKE_TMPL = '<div class="form-group col-xs-6"><input placeholder="姓名" class="like form-control"></div>';
         var l = n || 1,
             strEl = '';
         for (var i = 0; i < l; i++) {
@@ -776,7 +827,7 @@ $(function() {
         $('#likes').append(strEl);
     };
     var addComment = function(n) {
-        var COMMENT_TMPL = '<div class="comment form-group"><div class="row"><div class="col-xs-6"><label class="control-label">name 1:</label><input class="namea form-control"></div><div class="col-xs-6"><label class="control-label">name 2:</label><input class="nameb form-control"></div><div class="col-xs-12"><label class="control-label">msg:</label><input class="msg form-control"></div></div></div>';
+        var COMMENT_TMPL = '<div class="comment form-group"><div class="row"><div class="col-xs-6"><input placeholder="姓名1" class="namea form-control"></div><div class="col-xs-6"><input placeholder="姓名2" class="nameb form-control"></div><div class="col-xs-12"><input placeholder="评论" class="msg form-control"></div></div></div>';
         var l = n || 1,
             strEl = '';
         for (var i = 0; i < l; i++) {
@@ -800,6 +851,9 @@ $(function() {
                 $(this).val(persons[i++]);
             });
         };
+        var fillPhoto = function(photoUrl) {
+            Q.setPhoto(photoUrl);
+        };
         var fillComments = function(comments) {
             $('#comments').html('');
             addComment(comments.length);
@@ -819,6 +873,7 @@ $(function() {
             });
         };
         fillPost(template.post);
+        template.photo && fillPhoto(template.photo);
         fillLikes(template.persons);
         fillComments(template.comments);
     };
@@ -828,10 +883,18 @@ $(function() {
     $('#btn').on('click', function() {
         var img = document.getElementById('demo');
         var src = buildURL();
-        img.src = src;
+        if (src) {
+            $('.waiting-wrapper').show();
+            Q.imgReady(src, function() {
+                img.src = src;
+                $('#download').attr('href', src + '&download');
+                $('.waiting-wrapper').hide();
+                $('.result-wrapper').show();
+            });
+        }
     });
-    $('#load').on('click', function() {
-        loadTemplate(Q.template.newyear);
+    $('.load-tmpl').on('click', function() {
+        loadTemplate(Q.template[$(this).attr('id')]);
     });
     $('#add-like').on('click', function() {
         addLike();
@@ -849,4 +912,6 @@ $(function() {
             $(this).hide().prev().show();
         }
     });
+    // $('#name').val('马逸清');
+    // $('#temp2').click();
 });

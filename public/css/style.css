@@ -8,13 +8,47 @@ body {
 a {
   color: #00B7FF;
 }
-
+h1,h2,h3,h4 {
+  color: #66ccff !important;
+}
 .container {
     background-color: #3971c0;
 }
-
+.col-md-12.page {
+    min-height: 320px;
+}
+.tmpl-wrapper {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.load-tmpl {
+    margin-top: 30px !important;
+}
+.comment .msg {
+    margin-top: 12px;
+    margin-bottom: 10px;
+}
+.photo-preview-wrapper {
+    display: none;
+}
 .cover {
     height: 100%;
     width: 100%;
     border: 0px;
+}
+.result-wrapper, .waiting-wrapper {
+    display: none;
+}
+#post {
+    min-height: 120px;
+}
+#add-like {
+    margin-bottom: 28px;
+}
+#btn {
+    margin-top: 30px;
+    margin-bottom: 60px;
+}
+#download {
+    margin-right: 20px;
 }

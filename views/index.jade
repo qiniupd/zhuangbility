@@ -10,42 +10,49 @@ block content
           //- .col-md-12
           img.cover(src='/img/cover2.png')
 
-          .col-md-12
+          .col-md-12.page
             h1 LET'S ZHUANGB
             h4: small QINIU Watermark Demo
-            h4 请选择装逼场景
-            button#load.btn.btn-primary.btn-lg.btn-block 春节度假装逼版
-            button#load.btn.btn-primary.btn-lg.btn-block 春晚吐槽装逼版
-            button#load.btn.btn-primary.btn-lg.btn-block 土豪红包装逼版
+            h4 为了从苦逼变为牛逼，装出一个有逼格的春节。建议您参考以下模板：
+            .tmpl-wrapper
+              button#temp1.load-tmpl.btn.btn-info.btn-lg.btn-block 春节度假版
+              button#temp2.load-tmpl.btn.btn-info.btn-lg.btn-block 春晚吐槽版
+              button#temp3.load-tmpl.btn.btn-info.btn-lg.btn-block 土豪红包版
+              button#temp4.load-tmpl.btn.btn-info.btn-lg.btn-block 天马行空（自定义）
 
-          .col-md-12
+          .col-md-12.page
             h4 设置昵称：
             .row
               .col-md-12.form-group
                 input#name.form-control(placeholder='七牛云存储', value='')
-              #upload-wrapper-1.col-md-12.form-group
-                button#uploadAvatar.btn.btn-primary.btn-block 上传头像
+              #upload-wrapper-1.col-xs-8.form-group
+                button#uploadAvatar.btn.btn-info.btn-lg.btn-block 上传头像
                 #progess-1
                 #error-1
+              img#avatar-preview.avatar-preview.col-xs-4(src='http://zhuangbility.qiniudn.com/default_avatar.jpg-ava')
 
             h4 发表文字:
             .row
               .col-md-12.form-group
                 textarea#post.form-control(placeholder='七牛云存储是世界上最好的云存储', row='5', value='')
               #upload-wrapper-2.col-md-12.form-group
-                button#uploadPhoto.btn.btn-primary.btn-block 上传照片
+                button#uploadPhoto.btn.btn-info.btn-lg.btn-block 上传照片
                 #progess-2
                 #error-2
+              .col-md-12.photo-preview-wrapper
+                p.info-text(style='color:white') 预览：
+                img#photo-preview.photo-preview.col-xs-12
 
-          .col-md-12
+
+          .col-md-12.page
             h4 设置点赞人员:
             #likes.likes.row
               - for (var i = 0; i < 4; i++)
-                .form-group.col-md-6
+                .form-group.col-xs-6
                   input.like.form-control(placeholder='姓名')
-            button#add-like.btn.btn-primary.btn-block(type='button') 添加点赞人员
+            button#add-like.btn.btn-default.col-xs-6.btn-block(type='button'): strong +
 
-          .col-md-12
+          .col-md-12.page
             h4 设置评论:
             #comments.comments
               - for (var i = 0; i < 3; i++)
@@ -57,12 +64,19 @@ block content
                       input.nameb.form-control(placeholder='姓名2')
                     .col-xs-12
                       input.msg.form-control(placeholder='评论')
-            button#add-comment.btn.btn-primary.btn-block(type='button') 添加评论
+            button#add-comment.btn.btn-default.btn-block(type='button'): strong +
 
-          .col-md-12.col-xs-12
-            button#btn.btn.btn-success.btn-lg.btn-block Let's ZhuangB!
-            button#load.btn.btn-primary load
-            img#demo(src='', style='border:2px solid grey')
+          .col-md-12.page
+            button#btn.btn.btn-success.btn-lg.btn-block 准备好了吗？点我开始装B！
+            .waiting-wrapper
+              h2(style='color:white, text-align:center') 正在装B的道路上前进...请耐心等待...
+            .result-wrapper
+              h2 恭喜你，装逼成功！
+              p(style='color:white')
+                //- a#download.btn.btn-info.btn-sm 下载原图
+                //- | 点击“下载原图”的按钮，将装逼图分享到朋友圈，完成人生巅峰的事情就在此刻～
+                | 长按图片保存，并将装逼图分享到朋友圈，完成人生巅峰的事情就在此刻～
+              img#demo.col-xs-10(src='')
 
 //- block content
 //-   .phone-view
