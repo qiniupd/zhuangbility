@@ -56,3 +56,9 @@ h1,h2,h3,h4 {
 .next {
   margin: 40px 20px;
 }
+#progess-1,
+#error-1,
+#progess-1,
+#error-1 {
+  color: white;
+}

@@ -917,6 +917,6 @@ $(function() {
             $(this).hide().prev().show();
         }
     });
-    $('#name').val('马逸清');
+    // $('#name').val('马逸清');
     // $('#temp2').click();
 });
