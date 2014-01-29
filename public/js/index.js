@@ -14,45 +14,45 @@ Q.photoSize = {
 Q.photoStyle = '';
 Q.template = {
     temp1: {
-        post: '哥哥从南非给我带回来的5克拉蓝色钻石，可惜春节在夏威夷度假，晒得有点黑~~偶朋友圈的小伙伴们，你们春节假期怎么过？',
+        post: '女盆友从南非给我带回来的20克拉蓝色钻石，可惜春节在夏威夷度假，晒得有点黑~~偶朋友圈的小伙伴们，你们春节假期怎么过？',
         photo: 'http://zhuangbility.qiniudn.com/temp1.jpg',
-        persons: ['李娜', '潘石屹', '任志强', '马云', '庆丰包子铺', '小时代下的郭敬明', '韩寒', '新浪曹国伟'],
+        persons: ['李娜', '潘石屹', '章子怡', '王菲', '谢霆锋', '马云', '庆丰包子铺旅游团', '郭敬明', '韩寒', '新浪曹国伟'],
         comments: [
-            ['庆丰包子铺', '“庆丰包子铺旅游团开团，包子铺成热门景点”'],
-            ['小时代下的郭敬明', '又是这样漫长而灰蒙蒙的冬季—我们的爱，恨，感动，伤怀。'],
-            ['李云迪', '小时代下的郭敬明', '哥大的？'],
+            ['郭美美', '求偶遇！'],
+            ['章子怡', '求偶遇！'],
+            ['郭敬明', '求偶！'],
+            ['李云迪', '郭敬明', '萌！'],
             ['新浪曹国伟', '让“假期”飞！'],
-            ['马云', '新浪曹国伟', '玩扎堆“最爱春节旅游”吧！'],
             ['冯小刚', '你丫看春晚怎么不吐槽！']
         ]
     },
     temp2: {
-        post: '今年春晚还不错。',
+        post: '今年春晚还不错。该来的都来了。',
         photo: 'http://zhuangbility.qiniudn.com/temp2.jpg',
-        persons: ['蔡明', '撒贝宁', '朱军', '汪峰', '庆丰包子铺', '新浪曹国伟', '雷军', '章子怡', '张国立'],
+        persons: ['蔡明', '朱军', '汪峰', '庆丰包子铺一分钟春晚广告', '新浪曹国伟', '章子怡', '张国立', '董卿'],
         comments: [
-            ['庆丰包子铺', '“一分钟春晚广告-论庆丰包子铺的加盟申请”'],
-            ['雷军', '庆丰包子铺', '兄弟，广告忒贵。'],
-            ['罗永浩', '罗永浩', '很简单，因为你是土鳖，没见过世面。'],
+            ['宋祖英', '滚粗！'],
+            ['赵本山', '滚粗！'],
+            ['撒贝宁', '滚粗！'],
+            ['周立波', '滚粗！'],
+            ['郭德纲', '周立波', '滚粗！'],
             ['新浪曹国伟', '让“春晚穿帮镜头”飞！'],
-            ['马云', '新浪曹国伟', '去来往玩扎堆“最爱春晚”吧！'],
             ['冯小刚', '你丫看春晚怎么不吐槽！']
         ]
     },
     temp3: {
-        post: '给大家拜年，送新年红包了！每人21万，快来收~',
+        post: '给大家拜年，扎金花送新年红包了！是女神就送21万，快来收~',
         photo: 'http://zhuangbility.qiniudn.com/temp3.jpg',
-        persons: ['张小龙', '马化腾', '庆丰包子铺', '凤凰传奇', '汤唯', '新浪曹国伟', '马云', '汪峰', '章子怡'],
+        persons: ['张小龙', '马化腾', '庆丰包子铺营销咨询', '凤凰传奇', '汤唯', '新浪曹国伟', '马云', '汪峰', '章子怡'],
         comments: [
-            ['庆丰包子铺', '“从庆丰包子铺的21元套餐看名人营销”'],
-            ['张小龙', '庆丰包子铺', '。。。'],
+            ['汤唯', '么么哒！'],
+            ['林志玲', '么么哒！'],
+            ['苍井空', '么么哒！'],
+            ['张小龙', '么么哒！'],
+            ['凤凰传奇', '药，药，切克闹，煎饼果子来一套！'],
+            ['凤姐', '骗纸！'],
             ['新浪曹国伟', '让“红包”飞！'],
-            ['张小龙', '新浪曹国伟', '。。。'],
-            ['汤唯', '21万？么么哒！'],
-            ['马云', '汤唯', '玩扎堆“最爱支付宝红包拜年”吧！'],
-            ['张小龙', '马云', '。。。'],
-            ['冯小刚', '你丫春晚重播了几十遍了，怎么还不吐槽！'],
-            ['我', '冯小刚', '滚！']
+            ['冯小刚', '你丫春晚重播了几十遍了，怎么还不吐槽！']
         ]
     },
     temp4: {
@@ -389,7 +389,7 @@ Q.split2LikeLine = function(persons) {
     var lines = [],
         temp = [],
         tempLen = 0;
-    var limit = 17;
+    var limit = 18;
     for (var i = 0; i < persons.length; i++) {
         if (tempLen + Q.len(persons[i]) > limit) {
             lines.push(temp.join(', ') + ',');
@@ -654,7 +654,7 @@ $(function() {
         };
     };
     render.bubblehead = function(dy) {
-        var bubbleheadUrl = 'http://zhuangbility.qiniudn.com/v3/bubblehead.png';
+        var bubbleheadUrl = 'http://zhuangbility.qiniudn.com/v4/bubblehead.png';
         return {
             url: Q.image(bubbleheadUrl, 122, dy),
             h: 60
@@ -752,7 +752,7 @@ $(function() {
         };
     };
     var buildURL = function() {
-        var BG = 'http://zhuangbility.qiniudn.com/v5/whitebg.png';
+        var BG = 'http://zhuangbility.qiniudn.com/v3/whitebg.png';
 
         var renderList = [],
             scanLine = 132;
@@ -812,9 +812,11 @@ $(function() {
         // render bubblefoot
         var bubblefoot = render.bubblefoot(scanLine);
         renderList.push(bubblefoot.url);
-        scanLine += bubblefoot.h;
+        scanLine += bubblefoot.h + 20;
 
-        return BG + '?watermark/3' + renderList.join('');
+        var cropParam = 'imageMogr2/crop/720x' + scanLine;
+        var finalUrl = BG + '?watermark/3' + renderList.join('') + '%7C' + cropParam;
+        return finalUrl;
     };
     // ------------------------------------------------
     var addLike = function(n) {
@@ -876,6 +878,8 @@ $(function() {
         template.photo && fillPhoto(template.photo);
         fillLikes(template.persons);
         fillComments(template.comments);
+        $('.waiting-wrapper').hide();
+        $('.result-wrapper').hide();
     };
 
     Q.initPluploader('uploadAvatar', 'upload-wrapper-1', 'progess-1', 'error-1');
@@ -885,6 +889,7 @@ $(function() {
         var src = buildURL();
         if (src) {
             $('.waiting-wrapper').show();
+            $('.result-wrapper').hide();
             Q.imgReady(src, function() {
                 img.src = src;
                 $('#download').attr('href', src + '&download');
@@ -912,6 +917,6 @@ $(function() {
             $(this).hide().prev().show();
         }
     });
-    // $('#name').val('马逸清');
+    $('#name').val('马逸清');
     // $('#temp2').click();
 });

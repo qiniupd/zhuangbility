@@ -7,21 +7,30 @@ block content
         .row
           //- .col-md-12
           img.cover(src='/img/cover1.png')
-          //- .col-md-12
+
+          .col-md-12(style='text-align:center')
+            img.next(src='/img/next.png')
+
           img.cover(src='/img/cover2.png')
+
+          .col-md-12(style='text-align:center')
+            img.next(src='/img/next.png')
 
           .col-md-12.page
             h1 LET'S ZHUANGB
             h4: small QINIU Watermark Demo
-            h4 为了从苦逼变为牛逼，装出一个有逼格的春节。建议您参考以下模板：
+            h4 过年不被逼，一定要装逼。春节期间，敬请参考一下低成本装逼指引，装出一个有逼格的假期：
             .tmpl-wrapper
               button#temp1.load-tmpl.btn.btn-info.btn-lg.btn-block 春节度假版
               button#temp2.load-tmpl.btn.btn-info.btn-lg.btn-block 春晚吐槽版
               button#temp3.load-tmpl.btn.btn-info.btn-lg.btn-block 土豪红包版
               button#temp4.load-tmpl.btn.btn-info.btn-lg.btn-block 天马行空（自定义）
 
-          .col-md-12.page
-            h4 设置昵称：
+          .col-md-12(style='text-align:center')
+            img.next(src='/img/next.png')
+
+          .col-md-12.page#step1
+            h4 第一步，设置昵称：
             .row
               .col-md-12.form-group
                 input#name.form-control(placeholder='七牛云存储', value='')
@@ -31,7 +40,11 @@ block content
                 #error-1
               img#avatar-preview.avatar-preview.col-xs-4(src='http://zhuangbility.qiniudn.com/default_avatar.jpg-ava')
 
-            h4 发表文字:
+          //- .col-md-12(style='text-align:center')
+          //-   img.next(src='/img/next.png')
+
+          .col-md-12.page#step2
+            h4 第二步，发表文字:
             .row
               .col-md-12.form-group
                 textarea#post.form-control(placeholder='七牛云存储是世界上最好的云存储', row='5', value='')
@@ -43,17 +56,22 @@ block content
                 p.info-text(style='color:white') 预览：
                 img#photo-preview.photo-preview.col-xs-12
 
+          //- .col-md-12(style='text-align:center')
+          //-   img.next(src='/img/next.png')
 
-          .col-md-12.page
-            h4 设置点赞人员:
+          .col-md-12.page#step3
+            h4 第三步，设置点赞人员:
             #likes.likes.row
               - for (var i = 0; i < 4; i++)
                 .form-group.col-xs-6
                   input.like.form-control(placeholder='姓名')
             button#add-like.btn.btn-default.col-xs-6.btn-block(type='button'): strong +
 
-          .col-md-12.page
-            h4 设置评论:
+          //- .col-md-12(style='text-align:center')
+          //-   img.next(src='/img/next.png')
+
+          .col-md-12.page#step4
+            h4 第四步，设置评论:
             #comments.comments
               - for (var i = 0; i < 3; i++)
                 .comment.form-group
@@ -66,7 +84,10 @@ block content
                       input.msg.form-control(placeholder='评论')
             button#add-comment.btn.btn-default.btn-block(type='button'): strong +
 
-          .col-md-12.page
+          .col-md-12(style='text-align:center')
+            img.next(src='/img/next.png')
+
+          .col-md-12.page#step5
             button#btn.btn.btn-success.btn-lg.btn-block 准备好了吗？点我开始装B！
             .waiting-wrapper
               h2(style='color:white, text-align:center') 正在装B的道路上前进...请耐心等待...

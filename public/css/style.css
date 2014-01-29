@@ -3,6 +3,7 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   /*background: url(../img/web-bg.png);*/
   background-color: #3971c0 !important;
+  padding-bottom: 50px;
 }
 
 a {
@@ -15,7 +16,7 @@ h1,h2,h3,h4 {
     background-color: #3971c0;
 }
 .col-md-12.page {
-    min-height: 320px;
+    min-height: 200px;
 }
 .tmpl-wrapper {
     margin-top: 20px;
@@ -51,4 +52,7 @@ h1,h2,h3,h4 {
 }
 #download {
     margin-right: 20px;
+}
+.next {
+  margin: 40px 20px;
 }
