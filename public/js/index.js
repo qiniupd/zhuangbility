@@ -14,6 +14,7 @@ Q.photoSize = {
 Q.photoStyle = '';
 Q.template = {
     temp1: {
+        needName: false,
         post: '女盆友从南非给我带回来的20克拉蓝色钻石，可惜春节在夏威夷度假，晒得有点黑~~偶朋友圈的小伙伴们，你们春节假期怎么过？',
         photo: 'http://zhuangbility.qiniudn.com/temp1.jpg',
         persons: ['李娜', '潘石屹', '章子怡', '王菲', '谢霆锋', '马云', '庆丰包子铺旅游团', '郭敬明', '韩寒', '新浪曹国伟'],
@@ -27,6 +28,7 @@ Q.template = {
         ]
     },
     temp2: {
+        needName: false,
         post: '今年春晚还不错。该来的都来了。',
         photo: 'http://zhuangbility.qiniudn.com/temp2.jpg',
         persons: ['蔡明', '朱军', '汪峰', '庆丰包子铺一分钟春晚广告', '新浪曹国伟', '章子怡', '张国立', '董卿'],
@@ -41,6 +43,7 @@ Q.template = {
         ]
     },
     temp3: {
+        needName: false,
         post: '给大家拜年，扎金花送新年红包了！是女神就送21万，快来收~',
         photo: 'http://zhuangbility.qiniudn.com/temp3.jpg',
         persons: ['张小龙', '马化腾', '庆丰包子铺营销咨询', '凤凰传奇', '汤唯', '新浪曹国伟', '马云', '汪峰', '章子怡'],
@@ -56,6 +59,21 @@ Q.template = {
         ]
     },
     temp4: {
+        needName: true,
+        post: '今天菊花辣辣的。',
+        photo: 'http://zhuangbility.qiniudn.com/temp4.jpg',
+        persons: ['王力宏', '周杰伦', '吴彦祖', '黄晓明', '刘烨', '李敏镐', '金城武', '陈冠希', '张亮'],
+        comments: [
+            ['王力宏', '每次和云迪在一起时，我也会这样。。'],
+            ['周杰伦', '王力宏', '哎哟，这个屌，不错哦'],
+            ['李敏镐', '撒啦嘿哟'],
+            ['$name', '李敏镐', '欧巴，哦多克~'],
+            ['黄晓明', '我的菊花闹太套！'],
+            ['陈冠希', '$name', '可以约你做我下一部片子的女主角么？'],
+            ['$name', '陈冠希', '滚开，我不是你想的那种女人！']
+        ]
+    },
+    tempempty: {
         post: '',
         persons: ['', '', ''],
         comments: [
@@ -493,6 +511,10 @@ Q.initPluploader = function(browse_button_id, container_id, progress_id, error_i
 
 Q.setPhoto = function(url) {
     Q.photoUrl = url;
+    if (!Q.photoUrl) {
+        $('.photo-preview-wrapper').hide();
+        return;
+    }
     $('.photo-preview-wrapper').show().find('.info-text').text('加载中...');
     Q.imgReady(Q.photoUrl, function() {
         Q.photoSize.width = this.width;
@@ -839,6 +861,10 @@ $(function() {
     };
     var loadTemplate = function(template) {
         var name = $('#name').val();
+        if (template.needName && name === '') {
+            alert('该模板需要先填写昵称才能使用哦！');
+            return;
+        }
         var fillPost = function(post) {
             $('#post').val(post);
         };
@@ -875,7 +901,11 @@ $(function() {
             });
         };
         fillPost(template.post);
-        template.photo && fillPhoto(template.photo);
+        if (template.photo) {
+            fillPhoto(template.photo);
+        } else {
+            fillPhoto('');
+        }
         fillLikes(template.persons);
         fillComments(template.comments);
         $('.waiting-wrapper').hide();
