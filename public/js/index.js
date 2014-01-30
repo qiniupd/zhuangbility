@@ -5,7 +5,7 @@
 
 var Q = {};
 
-Q.avatarUrl = 'http://zhuangbility.qiniudn.com/default_avatar.jpg';
+Q.avatarUrl = 'http://zblq.qiniudn.com/a.jpg';
 Q.photoUrl = '';
 Q.photoSize = {
     width: 0,
@@ -16,7 +16,7 @@ Q.template = {
     temp1: {
         needName: false,
         post: '女盆友从南非给我带回来的20克拉蓝色钻石，可惜春节在夏威夷度假，晒得有点黑~~偶朋友圈的小伙伴们，你们春节假期怎么过？',
-        photo: 'http://zhuangbility.qiniudn.com/temp1.jpg',
+        photo: 'http://zblq.qiniudn.com/1.jpg',
         persons: ['李娜', '潘石屹', '章子怡', '王菲', '谢霆锋', '马云', '庆丰包子铺旅游团', '郭敬明', '韩寒', '新浪曹国伟'],
         comments: [
             ['郭美美', '求偶遇！'],
@@ -30,7 +30,7 @@ Q.template = {
     temp2: {
         needName: false,
         post: '今年春晚还不错。该来的都来了。',
-        photo: 'http://zhuangbility.qiniudn.com/temp2.jpg',
+        photo: 'http://zblq.qiniudn.com/2.jpg',
         persons: ['蔡明', '朱军', '汪峰', '庆丰包子铺一分钟春晚广告', '新浪曹国伟', '章子怡', '张国立', '董卿'],
         comments: [
             ['宋祖英', '滚粗！'],
@@ -45,7 +45,7 @@ Q.template = {
     temp3: {
         needName: false,
         post: '给大家拜年，扎金花送新年红包了！是女神就送21万，快来收~',
-        photo: 'http://zhuangbility.qiniudn.com/temp3.jpg',
+        photo: 'http://zblq.qiniudn.com/3.jpg',
         persons: ['张小龙', '马化腾', '庆丰包子铺营销咨询', '凤凰传奇', '汤唯', '新浪曹国伟', '马云', '汪峰', '章子怡'],
         comments: [
             ['汤唯', '么么哒！'],
@@ -61,7 +61,7 @@ Q.template = {
     temp4: {
         needName: true,
         post: '今天菊花辣辣的。',
-        photo: 'http://zhuangbility.qiniudn.com/temp4.jpg',
+        photo: 'http://zblq.qiniudn.com/4.jpg',
         persons: ['王力宏', '周杰伦', '吴彦祖', '黄晓明', '刘烨', '李敏镐', '金城武', '陈冠希', '张亮'],
         comments: [
             ['王力宏', '每次和云迪在一起时，我也会这样。。'],
@@ -71,6 +71,21 @@ Q.template = {
             ['黄晓明', '我的菊花闹太套！'],
             ['陈冠希', '$name', '可以约你做我下一部片子的女主角么？'],
             ['$name', '陈冠希', '滚开，我不是你想的那种女人！']
+        ]
+    },
+    temp5: {
+        needName: false,
+        post: '收到图的亲，新年快乐，大吉大利！',
+        photo: 'http://zblq.qiniudn.com/5.jpg',
+        persons: ['张小龙', '马化腾', '庆丰包子铺营销咨询', '凤凰传奇', '汤唯', '新浪曹国伟', '马云', '汪峰', '章子怡'],
+        comments: [
+            ['汤唯', '收到拜年图的亲，新年快乐，大吉大利！'],
+            ['林志玲', '收到拜年图的亲，新年快乐，大吉大利！'],
+            ['苍井空', '收到拜年图的亲，新年快乐，大吉大利！'],
+            ['张小龙', '收到拜年图的亲，新年快乐，大吉大利！'],
+            ['王力宏', '收到拜年图的亲，新年快乐，大吉大利！'],
+            ['凤姐', '收到拜年图的亲，新年快乐，大吉大利！'],
+            ['冯小刚', '收到拜年图的亲，新年快乐，大吉大利！等下别忘了看春晚']
         ]
     },
     tempempty: {
@@ -498,7 +513,7 @@ Q.initPluploader = function(browse_button_id, container_id, progress_id, error_i
 
     uploader.bind('FileUploaded', function(up, file, info) {
         var res = $.parseJSON(info.response);
-        var link = 'http://zhuangbility.qiniudn.com/';
+        var link = 'http://zblq.qiniudn.com/';
         if (res.key.indexOf('avatar/') > -1) {
             Q.avatarUrl = link + res.key;
             $('#avatar-preview').attr('src', Q.avatarUrl + '-ava');
@@ -676,15 +691,15 @@ $(function() {
         };
     };
     render.bubblehead = function(dy) {
-        var bubbleheadUrl = 'http://zhuangbility.qiniudn.com/v4/bubblehead.png';
+        var bubbleheadUrl = 'http://zblq.qiniudn.com/v4/bubblehead.png';
         return {
             url: Q.image(bubbleheadUrl, 122, dy),
             h: 60
         };
     };
     render.likes = function(persons, oy) {
-        var like1Url = 'http://zhuangbility.qiniudn.com/like1.png',
-            like2Url = 'http://zhuangbility.qiniudn.com/like2.png',
+        var like1Url = 'http://zblq.qiniudn.com/like1.png',
+            like2Url = 'http://zblq.qiniudn.com/like2.png',
             result = '';
         var lines = Q.split2LikeLine(persons);
         for (var i = 0; i < lines.length; i++) {
@@ -697,14 +712,14 @@ $(function() {
         };
     };
     render.cutline = function(dy) {
-        var cutlineUrl = 'http://zhuangbility.qiniudn.com/cutline.png';
+        var cutlineUrl = 'http://zblq.qiniudn.com/cutline.png';
         return {
             url: Q.image(cutlineUrl, 122, dy),
             h: 14
         };
     };
     render.comments = function(comments, oy) {
-        var commentUrl = 'http://zhuangbility.qiniudn.com/comment.png';
+        var commentUrl = 'http://zblq.qiniudn.com/comment.png';
         var firstLine = function(name, src, dx, dy) {
             var result = '';
             var nameLen = Q.len(name);
@@ -767,14 +782,14 @@ $(function() {
         };
     };
     render.bubblefoot = function(dy) {
-        var bubblefootUrl = 'http://zhuangbility.qiniudn.com/v1/bubblefoot.png';
+        var bubblefootUrl = 'http://zblq.qiniudn.com/v1/bubblefoot.png';
         return {
             url: Q.image(bubblefootUrl, 0, dy),
             h: 40
         };
     };
     var buildURL = function() {
-        var BG = 'http://zhuangbility.qiniudn.com/v3/whitebg.png';
+        var BG = 'http://zblq.qiniudn.com/v3/whitebg.png';
 
         var renderList = [],
             scanLine = 132;
